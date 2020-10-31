@@ -1,9 +1,10 @@
 # tpw_p1
 
+# Dataset
+https://www.kaggle.com/usernam3/shopify-app-store?select=pricing_plans.csv
 
+# Colocar licença
 
-
-Colocar licença:
 Thank you for using our template!
 
 For more awesome templates please visit https://colorlib.com/wp/templates/
