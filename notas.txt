@@ -1,0 +1,14 @@
+-> index : Sign in, Log in, Nav pesquisa, Categorias, Mais vendidos, trending..
+
+-> admin : Gerir compras,users, novas apps...
+
+-> Log page : email/username, pass, forgetpass, create new account
+
+-> Register : first,last name ; username; email; pass e confirm pass; fav categs(se houver tempo); 
+
+-> Logged in : navbar(exceto sign in e log in ofc), favoritos, detalhes conta, help (se houve tempo), compras, carrinho(se houver mt tempo)
+
+-> favoritos : filtros( iguais ao da pagina geral i guess), remover, comprar,
+
+-> compras : filtros(data, preco, ...)
+
