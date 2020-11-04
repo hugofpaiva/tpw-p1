@@ -1,0 +1,24 @@
+{% if user.is_authenticated %}
+
+<form
+	id="logoutForm"
+	action="/logout"
+	method="get"
+>
+	{% csrf_token %}
+	<a
+		style="font-size: 18px; color: #111111; font-weight: 600"
+		href="javascript:document.getElementById('logoutForm').submit()"
+		>Logout</a
+	>
+</form>
+
+{% else %}
+
+<a
+	style="font-size: 18px; color: #111111; font-weight: 600"
+	href="{% url 'login' %}"
+	>Login</a
+>
+
+{% endif %}

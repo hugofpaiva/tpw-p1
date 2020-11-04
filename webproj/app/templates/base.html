@@ -6,7 +6,7 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title></title>
+		<title>{% block title%}{% endblock %}</title>
 
 		<!-- Google Font -->
 		<link
@@ -84,24 +84,22 @@
 										</li>
 									</ul>
 								</li>
-								<li><a href="./blog.html">Blog</a></li>
 								<li><a href="./contact.html">Contacts</a></li>
 							</ul>
 						</nav>
 					</div>
 					<div class="col-lg-3 col-md-3">
-						<div class="header__nav__option">
+						<div class="header__nav__option" style="display: flex">
 							<a href="#" class="search-switch"
 								><img src="{% static "img/icon/search.png" %}" alt=""
 							/></a>
 							<a href="#"
 								><img src="{% static "img/icon/heart.png" %}" alt=""
 							/></a>
-							<a href="#"
-								><img src="{% static "img/icon/cart.png" %}" alt="" />
-								<span>0</span></a
-							>
-							<div class="price">$0.00</div>
+                            <a href="#"
+								><img src="{% static "img/icon/user.png" %}" alt=""
+							/></a>
+							{% include "loginpartial.html" %}
 						</div>
 					</div>
 				</div>
@@ -109,7 +107,7 @@
 			</div>
 		</header>
 		<!-- Header Section End -->
-
+        {% block content%}{% endblock %}
 		<!-- Footer Section Begin -->
 		<footer class="footer">
 			<div class="container">
@@ -125,7 +123,6 @@
 								The customer is at the heart of our unique
 								business model, which includes design.
 							</p>
-							<a href="#"><img src="{% static "img/payment.png" %}" alt="" /></a>
 						</div>
 					</div>
 					<div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
@@ -148,26 +145,6 @@
 								<li><a href="#">Delivary</a></li>
 								<li><a href="#">Return & Exchanges</a></li>
 							</ul>
-						</div>
-					</div>
-					<div class="col-lg-3 offset-lg-1 col-md-6 col-sm-6">
-						<div class="footer__widget">
-							<h6>NewLetter</h6>
-							<div class="footer__newslatter">
-								<p>
-									Be the first to know about new arrivals,
-									look books, sales & promos!
-								</p>
-								<form action="#">
-									<input
-										type="text"
-										placeholder="Your email"
-									/>
-									<button type="submit">
-										<span class="icon_mail_alt"></span>
-									</button>
-								</form>
-							</div>
 						</div>
 					</div>
 				</div>

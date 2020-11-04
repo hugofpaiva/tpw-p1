@@ -5,7 +5,7 @@ from django.db.models import Avg
 
 class User(models.Model):
     username=models.CharField(max_length=50,unique=True)
-    password=models.CharField()
+    password=models.CharField(max_length=50)
 
 class Client(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -31,7 +31,7 @@ class Product(models.Model):
 
     icon=models.URLField()
     rating=models.DecimalField(max_digits=2, decimal_places=1)
-    description=models.CharField()
+    description=models.CharField(max_length=50)
     category=models.ManyToManyField(Category)
     developer = models.ForeignKey(Developer, on_delete=models.CASCADE)
 
@@ -40,14 +40,14 @@ class Purchase(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
 class Prod_Benefits(models.Model):
     title=models.CharField(max_length=50)
-    description=models.CharField()
+    description=models.CharField(max_length=50)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
 
 class Reviews(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE)
     rating=models.DecimalField(max_digits=2, decimal_places=1)
     date=models.DateField()
-    body=models.CharField()
+    body=models.CharField(max_length=50)
 
 class Product_Pricing_Plan(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
