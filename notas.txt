@@ -1,3 +1,4 @@
+#Paginas a fazer
 -> index : Sign in, Log in, Nav pesquisa, Categorias, Mais vendidos, trending..
 
 -> admin : Gerir compras,users, novas apps...
@@ -12,3 +13,8 @@
 
 -> compras : filtros(data, preco, ...)
 
+
+#Falar com o prof:
+-> admin , usar apenas superuser? (signups..)
+
+its all for todays folks!
