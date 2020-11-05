@@ -44,7 +44,7 @@
 				<div class="row">
 					<div class="col-lg-3 col-md-3">
 						<div class="header__logo">
-							<a href="./index.html"
+							<a href="{% url 'base'  %}"
 								><img src="{% static "img/logo.png" %}" alt=""
 							/></a>
 						</div>
@@ -52,17 +52,17 @@
 					<div class="col-lg-6 col-md-6">
 						<nav class="header__menu mobile-menu">
 							<ul>
-								<li class="active">
-									<a href="./index.html">Home</a>
+								<li id="home">
+									<a href="{% url 'base'  %}">Home</a>
 								</li>
-								<li><a href="./shop.html">Shop</a></li>
+								<li id="shop"><a href="{% url 'shop'  %}">Shop</a></li>
 								<li>
 									<a href="#">Pages</a>
 									<ul class="dropdown">
-										<li>
+										<li id="aboutus">
 											<a href="./about.html">About Us</a>
 										</li>
-										<li>
+										<li id="shopdetails">
 											<a href="./shop-details.html"
 												>Shop Details</a
 											>
@@ -199,5 +199,8 @@
 		<script src="{% static "js/mixitup.min.js" %}"></script>
 		<script src="{% static "js/owl.carousel.min.js" %}"></script>
 		<script src="{% static "js/main.js" %}"></script>
+        <script type="text/javascript">
+      {% if nmenu %} $("li#{{activelem}}").addClass("active") {% endif %}
+        </script>
 	</body>
 </html>
