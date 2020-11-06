@@ -200,7 +200,7 @@
 		<script src="{% static "js/owl.carousel.min.js" %}"></script>
 		<script src="{% static "js/main.js" %}"></script>
         <script type="text/javascript">
-      {% if nmenu %} $("li#{{activelem}}").addClass("active") {% endif %}
+      {% if activelem %} $("li#{{activelem}}").addClass("active") {% endif %}
         </script>
 	</body>
 </html>

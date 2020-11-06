@@ -1,6 +1,7 @@
 
 
  {% extends 'base.html' %}
+{% load static %}
 <body>
     <!-- Page Preloder -->
     <div id="preloder">
@@ -636,7 +637,8 @@
                         </div>
                         <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/product/product-14.jpg">
+                                <! -- apenas testei o static-->
+                                <div class="product__item__pic set-bg" data-setbg="{% static  "img/product/product-14.jpg" %}">
                                     <ul class="product__hover">
                                         <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                         <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a>
