@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from app.forms import *
 from app.models import *
@@ -24,3 +25,11 @@ def register(request):
     else:
         form = SignUpForm()
     return render(request,'register.html',{'form':form})
+
+def prodDetails(request,idprod):
+    try:
+        product=Product.objects.get(id=idprod)
+    except:
+        return HttpResponseNotFound('<h1>Page not found</h1>')
+    return render(request,'productdetails.html',{'prod':product})
+
