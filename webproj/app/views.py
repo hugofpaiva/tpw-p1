@@ -38,6 +38,7 @@ def indexView(request):
             break
         if arrival not in bestSellers:
             arrival.tags = "new"
+            arrival.new=True
             newArrivalsDistinct.append(arrival)
             count+=1
         else:
