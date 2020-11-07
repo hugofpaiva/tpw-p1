@@ -19,10 +19,12 @@ class Product(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 class Client(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Que é isto MANO?
+    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD
     favorites=models.ManyToManyField(Product, blank=True)
     def __str__(self):
         return str(self.user.username) + ", " + str( self.user.email)
+
+
 
 class Purchase(models.Model):
     client=models.ForeignKey(Client,on_delete=models.CASCADE)
@@ -30,7 +32,7 @@ class Purchase(models.Model):
 
 class Prod_Benefits(models.Model):
     title=models.CharField(max_length=50)
-    description=models.CharField(max_length=50)
+    description=models.CharField(max_length=500)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
 
 class Reviews(models.Model):

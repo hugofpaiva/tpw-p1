@@ -16,7 +16,8 @@
 
 -> compras : filtros(data, preco, ...)
 
--> Produto: comprar, adicionar aos favoritos, info do produto e reviews
+-> Produto: comprar, adicionar aos favoritos, info do produto e reviews, tags reviews?
+
 
 
 

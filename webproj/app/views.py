@@ -48,7 +48,6 @@ def indexView(request):
             bestSellers[index].tags += " new"
 
 
-
     products = newArrivalsDistinct + bestSellers
 
 
@@ -61,7 +60,6 @@ def indexView(request):
             product.rate=0
         product.nStars = range(int(product.rate))
         product.nEmptyStars = range(5-int(product.rate))
-
 
 
     return render(request, 'index.html',{'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
@@ -100,6 +98,7 @@ def shopSearchView(request, prodName, pageNumber):
         else:
             product.rate = 0
         product.nStars = range(int(product.rate))
+
         product.nEmptyStars = range(5-int(product.rate))
     return render(request,'shop.html',{'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
                                        'totalPages': totalPages,'actualPage':pageNumber,'leftPages':leftPages,
@@ -120,9 +119,7 @@ def shopView(request, pageNumber=1):
 
     developers = Developer.objects.all()
 
-    if totalPages == 0:
-        totalPages=1
-
+    if totalPages == 0: totalPages=1
     leftPages = totalPages - pageNumber
     if leftPages<=2:
         rangeLeftPages = range(leftPages)
@@ -154,14 +151,25 @@ def register(request):
             user.refresh_from_db()
             client = Client(user=user)
             client.save()
-            return render(request,'base.html',{'activelem': 'home'})
+            return render(request,'index.html',{'activelem': 'home'})
     else:
         form = SignUpForm()
     return render(request,'register.html',{'form':form})
 
+
+
 def prodDetails(request,idprod):
-    try:
-        product=Product.objects.get(id=idprod)
-    except:
-        return HttpResponseNotFound('<h1>Page not found</h1>')
-    return render(request,'productdetails.html',{'prod':product})
+    #try:
+    product=Product.objects.get(id=idprod)
+    reviews=Reviews.objects.filter(product=product)
+    rate = reviews.aggregate(Avg('rating'))['rating__avg']
+    if rate:
+        product.rate = rate
+    else:
+        product.rate = 0
+    product.nStars = range(int(product.rate))
+    product.nEmptyStars = range(5 - int(product.rate))
+    productbenefits=Prod_Benefits.objects.filter(product=product)
+    ##except:
+        ##return HttpResponseNotFound('<h1>Page not found</h1>')
+    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits})
