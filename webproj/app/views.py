@@ -1,6 +1,6 @@
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
-from django.db.models import Min, Avg
+from django.db.models import Min, Avg, Count
 from app.forms import *
 from app.models import *
 import random
@@ -20,7 +20,49 @@ def indexView(request):
         if prod not in productsBanner:
             productsBanner.append(prod)
 
-    return render(request, 'index.html',{'activelem': 'home', 'productsBanner': productsBanner})
+    # Vai contar o nº de ocorrências noutra tabela e ordenar pelas ocorrências
+    bestSellers = Product.objects.annotate(numVendasProd=Count('purchase'))
+
+    bestSellers = list(bestSellers[:6])
+
+    for best in bestSellers:
+        best.tags = "best"
+
+    newArrivals = Product.objects.all().order_by('-id')
+
+    newArrivalsDistinct= []
+
+    count=0
+    for arrival in newArrivals:
+        if(count==6):
+            break
+        if arrival not in bestSellers:
+            arrival.tags = "new"
+            newArrivalsDistinct.append(arrival)
+            count+=1
+        else:
+            index = bestSellers.index(arrival)
+            bestSellers[index].new = True
+            bestSellers[index].tags += " new"
+
+
+
+    products = newArrivalsDistinct + bestSellers
+
+
+    for product in products:
+        product.price = round(Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'],2)
+        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
+        if rate:
+            product.rate=rate
+        else:
+            product.rate=0
+        product.nStars = range(int(product.rate))
+        product.nEmptyStars = range(5-int(product.rate))
+
+
+
+    return render(request, 'index.html',{'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
 
 def shopBaseView(request):
     return render(request, 'shop.html', {'activelem': 'shop'})
@@ -53,7 +95,11 @@ def shopSearchView(request, prodName, pageNumber):
 
     for product in productsOffset:
         product.price = round(Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'],2)
-        product.rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
+        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
+        if rate:
+            product.rate = rate
+        else:
+            product.rate = 0
         product.nStars = range(int(product.rate))
         product.nEmptyStars = range(5-int(product.rate))
     return render(request,'shop.html',{'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,

@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Avg
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
@@ -17,10 +16,11 @@ class Product(models.Model):
     description=models.CharField(max_length=50)
     category=models.ManyToManyField(Category)
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
 
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Que é isto MANO?
-    favorites=models.ManyToManyField(Product,default=None)
+    favorites=models.ManyToManyField(Product, blank=True)
     def __str__(self):
         return str(self.user.username) + ", " + str( self.user.email)
 
