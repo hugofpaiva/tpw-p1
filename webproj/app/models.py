@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Avg
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 
@@ -35,7 +36,12 @@ class Prod_Benefits(models.Model):
 class Reviews(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rating=models.DecimalField(max_digits=2, decimal_places=1)
+    rating=models.IntegerField(
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0)
+        ]
+    )
     date=models.DateField()
     body=models.CharField(max_length=50)
 

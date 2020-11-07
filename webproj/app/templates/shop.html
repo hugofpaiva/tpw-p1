@@ -392,19 +392,7 @@
 								<div class="product__item__text">
 									<h6>{{ product.name }}</h6>
 									<div class="rating">
-                                        {% with ''|center:product.rate as range %}
-                                                {% for _ in range %}
-                                                     <i class="fa fa-star"></i>
-                                                {% endfor %}
-                                            {% endwith %}
 
-                                        {% with product.rate|add:"-5" as numLoop %}
-                                        {% with ''|center:numLoop as range %}
-                                                {% for _ in range %}
-                                                     <i class="fa fa-star-o"></i>
-                                                {% endfor %}
-                                        {% endwith %}
-                                        {% endwith %}
 
 									</div>
 									<h5>{{ product.price }}</h5>
@@ -417,21 +405,7 @@
 						<div class="col-lg-12">
 							<div class="product__pagination">
 								<a class="active" href="#">{{ actualPage }}</a>
-                                {% with totalPages|add:"-{{ actualPage }}" as numPages %}
-                                {% with ''|center:numPages as range %}
-                                {% for _ in range|slice:":2" %}
-                                    <i class="fa fa-star"></i>
-                                {% endfor %}
-                                {% endwith %}
 
-
-
-
-                                 {% if numPages > 2  %}
-                                    <span>...</span>
-                                    <a href="#">{{ totalPages }}</a>
-                                {% endif %}
-                                {% endwith %}
 
 							</div>
 						</div>

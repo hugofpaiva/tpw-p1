@@ -22,8 +22,8 @@ def shopSearchView(request, prodName, pageNumber):
     totalProducts=products.count()
 
     for product in productsOffset:
-        product.price = Product_Pricing_Plan.filter(product__exact=product).aggregate(Min('price'))
-        product.rate = int(Reviews.filter(product__exact=product).aggregate(Avg('rating')))
+        product.price = Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))
+        product.rate = int(Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg'])
     return render(request,'shop.html',{'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,'totalPages': round(totalProducts/12), 'actualPage':pageNumber})
 
 def register(request):

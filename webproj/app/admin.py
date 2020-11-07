@@ -3,7 +3,6 @@ from app.models import *
 # Register your models here.
 
 admin.site.register(Client)
-admin.site.register(Product)
 admin.site.register(Developer)
 admin.site.register(Category)
 admin.site.register(Purchase)
