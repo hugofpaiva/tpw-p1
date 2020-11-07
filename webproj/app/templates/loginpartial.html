@@ -1,11 +1,22 @@
+{% load static %} 
+
 {% if user.is_authenticated %}
+
+
+<a href="#"> <img src="{% static "img/icon/heart.png" %}" alt=""/> </a>
+
+<a href="#"> <img src="{% static "img/icon/user.png" %}" alt=""/> </a>
+
 <a>{{ user }}</a>
+
 <form id="logoutForm" action="/logout" method="get">
 	{% csrf_token %}
+
 	<a
-style="font-size: 18px; color: #111111; font-weight: 600"
-href="javascript:document.getElementById('logoutForm').submit()"
->Logout</a>
+		style="font-size: 18px; color: #111111; font-weight: 600"
+		href="javascript:document.getElementById('logoutForm').submit()"
+		>Logout</a
+	>
 </form>
 
 {% else %}

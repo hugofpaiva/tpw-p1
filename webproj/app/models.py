@@ -7,13 +7,11 @@ from django.contrib.auth.models import User
 class Developer(models.Model):
     name=models.CharField(max_length=50)
 
-
 class Category(models.Model):
     title=models.CharField(max_length=50,unique=True)
 
 class Product(models.Model):
     name=models.CharField(max_length=50,unique=True)
-
     icon=models.URLField()
     description=models.CharField(max_length=50)
     category=models.ManyToManyField(Category)
@@ -22,7 +20,6 @@ class Product(models.Model):
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
     favorites=models.ManyToManyField(Product)
-
 
 class Purchase(models.Model):
     client=models.ForeignKey(Client,on_delete=models.CASCADE)
@@ -35,6 +32,7 @@ class Prod_Benefits(models.Model):
 
 class Reviews(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rating=models.DecimalField(max_digits=2, decimal_places=1)
     date=models.DateField()
     body=models.CharField(max_length=50)

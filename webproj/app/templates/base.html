@@ -55,53 +55,25 @@
 								<li id="home">
 									<a href="{% url 'base'  %}">Home</a>
 								</li>
+
 								<li id="shop"><a href="{% url 'shop'  %}">Shop</a></li>
-								<li>
-									<a href="#">Pages</a>
-									<ul class="dropdown">
-										<li id="aboutus">
-											<a href="./about.html">About Us</a>
-										</li>
-										<li id="shopdetails">
-											<a href="./shop-details.html"
-												>Shop Details</a
-											>
-										</li>
-										<li>
-											<a href="./shopping-cart.html"
-												>Shopping Cart</a
-											>
-										</li>
-										<li>
-											<a href="./checkout.html"
-												>Check Out</a
-											>
-										</li>
-										<li>
-											<a href="./blog-details.html"
-												>Blog Details</a
-											>
-										</li>
-									</ul>
-								</li>
-								<li><a href="./contact.html">Contacts</a></li>
+
+								<li><a href="./aboutus.html">About Us</a></li>
 							</ul>
 						</nav>
 					</div>
 					<div class="col-lg-3 col-md-3">
-						<div class="header__nav__option" style="display: flex">
-							<a href="#" class="search-switch"
-								><img src="{% static "img/icon/search.png" %}" alt=""
-							/></a>
-							<a href="#"
-								><img src="{% static "img/icon/heart.png" %}" alt=""
-							/></a>
-                            <a href="#"
-								><img src="{% static "img/icon/user.png" %}" alt=""
-							/></a>
+						<div class="header__nav__option" style="display: flex;">
+							<a href="#" class="search-switch"><img src="{% static "img/icon/search.png" %}" alt=""></a>
+							
 							{% include "loginpartial.html" %}
 						</div>
 					</div>
+
+							
+
+					
+					
 				</div>
 				<div class="canvas__open"><i class="fa fa-bars"></i></div>
 			</div>

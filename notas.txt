@@ -1,20 +1,31 @@
 #Paginas a fazer
--> index : Sign in, Log in, Nav pesquisa, Categorias, Mais vendidos, trending..
 
--> admin : Gerir compras,users, novas apps...
+-> navbar: 
 
--> Log page : email/username, pass, forgetpass, create new account
+-> index : Sign in, Log in, Nav pesquisa, Mais vendidos...
 
--> Register : first,last name ; username; email; pass e confirm pass; fav categs(se houver tempo); 
+-> admin : Ver compras, users, novas apps e editar apps existentes
 
--> Logged in : navbar(exceto sign in e log in ofc), favoritos, detalhes conta, help (se houve tempo), compras, carrinho(se houver mt tempo)
+-> Log page : email/username, pass, forgetpass (perguntar ao prof), create new account
 
--> favoritos : filtros( iguais ao da pagina geral i guess), remover, comprar,
+-> Register : first,last name ; username; email; pass e confirm pass;
+
+-> Logged in : navbar(exceto sign in e log in ofc), favoritos, detalhes conta, compras
+
+-> favoritos : filtros(iguais ao da pagina shop), remover, comprar,
 
 -> compras : filtros(data, preco, ...)
+
+-> Produto: comprar, adicionar aos favoritos, info do produto e reviews
+
+
 
 
 #Falar com o prof:
 -> admin , usar apenas superuser? (signups..)
+-> Necessita de ser responsivo
+-> Tem de ter forgetpass?
+-> Podemos criar o cliente na view?
+-> Ratings dos produtos
 
 its all for todays folks!

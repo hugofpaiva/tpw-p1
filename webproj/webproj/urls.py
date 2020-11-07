@@ -24,5 +24,8 @@ urlpatterns = [
     path('', views.renderBase, name='base'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
-    path('shop/', views.shopBaseView, name='shop')
+
+    #Shop
+    path('shop/', views.shopBaseView, name='shop'),
+    path('shop/<str:prodName>/<int:pageNumber>', views.shopSearchView, name='shopSearchProd'),
 ]
