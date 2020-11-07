@@ -27,6 +27,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
 
     #Shop
-    path('shop/', views.shopBaseView, name='shop'),
+    path('shop/', views.shopView, name='shop'),
+    path('shop/<int:pageNumber>', views.shopView, name='shopPage'),
     path('shop/<str:prodName>/<int:pageNumber>', views.shopSearchView, name='shopSearchProd'),
 ]

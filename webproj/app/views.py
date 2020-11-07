@@ -1,6 +1,7 @@
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.db.models import Min, Avg, Count
+import math
 from app.forms import *
 from app.models import *
 import random
@@ -65,9 +66,6 @@ def indexView(request):
 
     return render(request, 'index.html',{'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
 
-def shopBaseView(request):
-    return render(request, 'shop.html', {'activelem': 'shop'})
-
 def shopSearchView(request, prodName, pageNumber):
     if pageNumber<1:
         return render(request, 'notfound.html')
@@ -86,6 +84,46 @@ def shopSearchView(request, prodName, pageNumber):
     if totalPages == 0:
         totalPages=1
 
+    if leftPages<=2:
+        rangeLeftPages = range(leftPages)
+    else:
+        rangeLeftPages = range(2)
+
+    for category in categories:
+        category.numProd = Product.objects.filter(category__exact=category).count()
+
+    for product in productsOffset:
+        product.price = round(Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'],2)
+        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
+        if rate:
+            product.rate = rate
+        else:
+            product.rate = 0
+        product.nStars = range(int(product.rate))
+        product.nEmptyStars = range(5-int(product.rate))
+    return render(request,'shop.html',{'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
+                                       'totalPages': totalPages,'actualPage':pageNumber,'leftPages':leftPages,
+                                       'rangeLeftPages': rangeLeftPages, 'categories':categories, 'developers': developers})
+
+def shopView(request, pageNumber=1):
+    if pageNumber<1:
+        return render(request, 'notfound.html')
+
+    offset = (pageNumber-1)*12
+    products = Product.objects.all()
+    productsOffset = products[offset:offset+12]
+    totalProducts=products.count()
+
+    totalPages = math.ceil(totalProducts/12)
+
+    categories = Category.objects.all()
+
+    developers = Developer.objects.all()
+
+    if totalPages == 0:
+        totalPages=1
+
+    leftPages = totalPages - pageNumber
     if leftPages<=2:
         rangeLeftPages = range(leftPages)
     else:

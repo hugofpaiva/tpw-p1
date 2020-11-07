@@ -95,34 +95,34 @@
 												<ul>
 													<li>
 														<a href="#"
-															>$0.00 - $50.00</a
+															>0€ - 10€</a
 														>
 													</li>
 													<li>
 														<a href="#"
-															>$50.00 - $100.00</a
+															>10€ - 25€</a
 														>
 													</li>
 													<li>
 														<a href="#"
-															>$100.00 -
-															$150.00</a
+															>25€ -
+															50€</a
 														>
 													</li>
 													<li>
 														<a href="#"
-															>$150.00 -
-															$200.00</a
+															>50€ -
+															100€</a
 														>
 													</li>
 													<li>
 														<a href="#"
-															>$200.00 -
-															$250.00</a
+															>100€ -
+															200€</a
 														>
 													</li>
 													<li>
-														<a href="#">250.00+</a>
+														<a href="#">250€ +</a>
 													</li>
 												</ul>
 											</div>
@@ -259,17 +259,17 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="product__pagination">
-								<a class="active" href="#">{{ actualPage }}</a>
+								<a class="active" href="./{{ actualPage }}">{{ actualPage }}</a>
 
 
                                 {% for _ in rangeLeftPages %}
-                                    <a href="#">{{ actualPage|add:forloop.counter }} </a>
+                                    <a href="./{{ actualPage|add:forloop.counter }}">{{ actualPage|add:forloop.counter }} </a>
                                 {% endfor %}
 
 
                                  {% if leftPages > 2  %}
                                     <span>...</span>
-                                    <a href="#">{{ totalPages }}</a>
+                                    <a href="./{{ totalPages }}">{{ totalPages }}</a>
                                 {% endif %}
 							</div>
 						</div>
