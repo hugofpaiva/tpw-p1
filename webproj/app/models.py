@@ -18,8 +18,10 @@ class Product(models.Model):
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
 
 class Client(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    favorites=models.ManyToManyField(Product)
+    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Que é isto MANO?
+    favorites=models.ManyToManyField(Product,default=None)
+    def __str__(self):
+        return str(self.user.username) + ", " + str( self.user.email)
 
 class Purchase(models.Model):
     client=models.ForeignKey(Client,on_delete=models.CASCADE)
