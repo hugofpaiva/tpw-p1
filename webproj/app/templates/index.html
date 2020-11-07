@@ -62,7 +62,11 @@
             <div
 				class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix {{ product.tags }}"
 			>
+            {% if product.rate > 0 %}
 				<div class="product__item sale">
+                {% else %}
+                <div class="product__item">
+                {% endif %}
 					<div
 						class="product__item__pic set-bg"
 						data-setbg="{{ product.icon }}"

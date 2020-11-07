@@ -213,7 +213,11 @@
 
                         {% for product in products %}
 						<div class="col-lg-4 col-md-6 col-sm-6">
-							<div class="product__item sale">
+							{% if product.rate > 0 %}
+                                <div class="product__item sale">
+                                {% else %}
+                                <div class="product__item">
+                                {% endif %}
 								<div
 									class="product__item__pic set-bg"
 									data-setbg="{{ product.icon }}"
