@@ -3,11 +3,24 @@ from django.shortcuts import render
 from django.db.models import Min, Avg
 from app.forms import *
 from app.models import *
+import random
 # Create your views here.
 
 #foi a maneira mais facil q arranjei para saber qual o elemento ativo na navbar, ja que o shop vai extender o base.html(navbars e essas merdas)
-def renderBase(request):
-    return render(request, 'base.html',{'activelem': 'home'})
+def indexView(request):
+    numBanners = random.randint(2, 6)
+    productsBanner = []
+    totalProds = Product.objects.count()
+
+    for _ in range(numBanners):
+        index = random.randint(0, totalProds-1)
+
+        prod = Product.objects.all()[index]
+
+        if prod not in productsBanner:
+            productsBanner.append(prod)
+
+    return render(request, 'index.html',{'activelem': 'home', 'productsBanner': productsBanner})
 
 def shopBaseView(request):
     return render(request, 'shop.html', {'activelem': 'shop'})
