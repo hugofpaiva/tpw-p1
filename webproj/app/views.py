@@ -162,6 +162,10 @@ def prodDetails(request,idprod):
     #try:
     product=Product.objects.get(id=idprod)
     reviews=Reviews.objects.filter(product=product)
+    for review in reviews:
+        review.nStars=range(int(review.rating))
+        review.nEmptyStars=range(5-int(review.rating))
+        print(review.nStars,review.nEmptyStars)
     rate = reviews.aggregate(Avg('rating'))['rating__avg']
     if rate:
         product.rate = rate
@@ -170,6 +174,8 @@ def prodDetails(request,idprod):
     product.nStars = range(int(product.rate))
     product.nEmptyStars = range(5 - int(product.rate))
     productbenefits=Prod_Benefits.objects.filter(product=product)
+    categories=product.category.all()
+    print(categories)
     ##except:
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
     return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits})

@@ -114,9 +114,10 @@
                                 <h5><span>Guaranteed Safe Checkout</span></h5>
                                 <img src="img/shop-details/details-payment.png" alt="">
                                 <ul>
-                                    <li><span>SKU:</span> 3812912</li>
-                                    <li><span>Categories:</span> Clothes</li>
-                                    <li><span>Tag:</span> Clothes, Skin, Body</li>
+                                    <span>Categories:</span>
+                                    {% for cat in prod.category.all %}
+                                       <li> {{ cat }}</li>
+                                    {% endfor %}
                                 </ul>
                             </div>
                         </div>
@@ -140,12 +141,8 @@
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tabs-5" role="tabpanel">
                                     <div class="product__details__tab__content">
-                                        <p class="note">Nam tempus turpis at metus scelerisque placerat nulla deumantos
-                                            solicitud felis. Pellentesque diam dolor, elementum etos lobortis des mollis
-                                            ut risus. Sedcus faucibus an sullamcorper mattis drostique des commodo
-                                        pharetras loremos.</p>
+                                        <p class="note">Product Information</p>
                                         <div class="product__details__tab__content__item">
-                                            <h5>Products Information</h5>
                                             <p>{{ prod.description }}</p>
                                         </div>
 
@@ -154,19 +151,43 @@
                                 <div class="tab-pane" id="tabs-6" role="tabpanel">
                                     <div class="product__details__tab__content">
                                         {% if revs %}
+                                        <h4 class="text-center">Check the Latest Reviews on this app!</h4>
                                         {% for rev in revs %}
                                             <div class="product__details__tab__content__item">
-                                            <div>
-                                                <h5>{{ rev.author }}</h5>
-                                                <h6>{{ rev.date }}</h6>
-                                                <h6>Rating Given: {{ rev.rating }}</h6>
-                                            </div>
-                                                <p>{{ rev.body}}</p>
+                                            <div class="container">
 
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-2">
+                                                                <img src="https://image.ibb.co/jw55Ex/def_face.jpg" class="img img-rounded img-fluid"/>
+                                                                <p class="text-secondary text-center">{{ rev.date }}</p>
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <p>
+                                                                    <a class="float-left" href="https://maniruzzaman-akash.blogspot.com/p/contact.html"><strong>{{ rev.author }}</strong></a>
+                                                                    {% for _ in rev.nEmptyStars %}
+                                                                          <span class="float-right"><i class="text-warning fa fa-star-o"></i></span>
+                                                                    {% endfor %}
+                                                                 {% for _ in rev.nStars %}
+                                                                          <span class="float-right"><i class="text-warning fa fa-star"></i></span>
+                                                                    {% endfor %}
+                                                               </p>
+                                                               <div class="clearfix"></div>
+                                                                <p>{{ rev.body }}</p>
+                                                                <p>
+                                                                    <a class="float-right btn text-white btn-danger"> <i class="fa fa-heart"></i> Like</a>
+                                                               </p>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                             </div>
                                         {% endfor %}
                                         {% else %}
-                                        <p>There are no Reviews for this Product!</p>
+                                        <h3 class="text-center">There are no Reviews for this Product!</h3>
                                         {% endif %}
                                     </div>
                                 </div>
