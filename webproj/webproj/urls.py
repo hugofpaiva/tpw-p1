@@ -30,4 +30,7 @@ urlpatterns = [
     path('shop/', views.shopView, name='shop'),
     path('shop/<int:pageNumber>', views.shopView, name='shopPage'),
     path('shop/<str:prodName>/<int:pageNumber>', views.shopSearchView, name='shopSearchProd'),
+
+    #account
+    path('account/', views.accountDetails, name="accountDetails"),
 ]

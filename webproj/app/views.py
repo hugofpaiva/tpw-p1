@@ -5,6 +5,7 @@ import math
 from app.forms import *
 from app.models import *
 import random
+from django.contrib.auth import authenticate, login
 # Create your views here.
 
 #foi a maneira mais facil q arranjei para saber qual o elemento ativo na navbar, ja que o shop vai extender o base.html(navbars e essas merdas)
@@ -179,3 +180,24 @@ def prodDetails(request,idprod):
     ##except:
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
     return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits})
+
+
+def accountDetails(request):
+
+    user = User.objects.get(username=request.user.username)
+
+    if request.method == "POST":
+        form = UpdateClientForm(request.POST, instance=request.user)
+        if form.is_valid():
+            update = form.save()
+            update.user = request.user
+            update.save()
+            update.refresh_from_db()
+            #to stay logged in
+            login(request, update.user)
+            return render(request,'index.html',{'activelem': 'home'})
+    else:
+        form = SignUpForm()
+
+
+    return render(request, 'clientdetails.html', {'user': user, 'form': form})
