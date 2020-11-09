@@ -213,46 +213,50 @@
 
                         {% for product in products %}
 						<div class="col-lg-4 col-md-6 col-sm-6">
-							{% if product.rate > 0 %}
-                                <div class="product__item sale">
-                                {% else %}
-                                <div class="product__item">
-                                {% endif %}
-								<div
-									class="product__item__pic set-bg"
-									data-setbg="{{ product.icon }}"
-								>
-									<ul class="product__hover">
-										<li>
-											<a href="#"
-												><img
-													src="{% static "img/icon/heart.png" %}"
-													alt=""
-											/></a>
-										</li>
-									</ul>
-								</div>
-								<div class="product__item__text">
-									<h6>{{ product.name }}</h6>
-                                <a class="add-cart">{{ product.description }}</a>
-									<div class="rating">
+								{% if product.rate > 0 %}
+									<div class="product__item sale">
+									{% else %}
+									<div class="product__item">
+									{% endif %}
 
-                                          {% for _ in product.nStars %}
-                                                 <i class="fa fa-star"></i>
-                                            {% endfor %}
-
-
-
-
-                                            {% for _ in product.nEmptyStars %}
-                                                 <i class="fa fa-star-o"></i>
-                                            {% endfor %}
-
-
+									<div
+										class="product__item__pic set-bg"
+										data-setbg="{{ product.icon }}"
+									>
+										<ul class="product__hover">
+											<li>
+												<a href="#"
+													><img
+														src="{% static "img/icon/heart.png" %}"
+														alt=""
+												/></a>
+											</li>
+										</ul>
 									</div>
-									<h5>{{ product.price }} €</h5>
+
+									<div class="product__item__text">
+										<h6>{{ product.name }}</h6>
+									<a class="add-cart">{{ product.description }}</a>
+										<div class="rating">
+
+											{% for _ in product.nStars %}
+													<i class="fa fa-star"></i>
+												{% endfor %}
+
+
+
+
+												{% for _ in product.nEmptyStars %}
+													<i class="fa fa-star-o"></i>
+												{% endfor %}
+
+
+										</div>
+										<h5>{{ product.price }} €</h5>
+									</div>
+
 								</div>
-							</div>
+
 						</div>
                         {% endfor %}
 					</div>
