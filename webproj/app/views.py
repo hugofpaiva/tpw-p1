@@ -175,11 +175,17 @@ def prodDetails(request,idprod):
     product.nStars = range(int(product.rate))
     product.nEmptyStars = range(5 - int(product.rate))
     productbenefits=Prod_Benefits.objects.filter(product=product)
+    pricing=Product_Pricing_Plan.objects.filter(product=product)
     categories=product.category.all()
     print(categories)
     ##except:
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
-    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits})
+    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits, 'plans':pricing})
+
+
+
+
+
 
 
 def accountDetails(request):
