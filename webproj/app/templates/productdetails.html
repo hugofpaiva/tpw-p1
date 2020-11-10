@@ -5,61 +5,49 @@
 
     <!-- Shop Details Section Begin -->
     <section class="shop-details">
-        <div class="product__details__pic">
-            <div class="container">
+        <div class="product__details__pic"  style="padding-top:0px;padding-bottom: 0px">
+            <div class="container" >
                 <div class="row">
-                    <div class="col-lg-12">
-                        <div class="product__details__breadcrumb">
-                            <a href="{% url 'index'  %}">Home</a>
-                            <a href="{% url 'shop'  %}">Shop</a>
-                            <span>{{ prod.name }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-3">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">
-                                    <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-1.png">
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">
-                                    <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-2.png">
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">
-                                    <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-3.png">
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#tabs-4" role="tab">
-                                    <div class="product__thumb__pic set-bg" data-setbg="img/shop-details/thumb-4.png">
-                                        <i class="fa fa-play"></i>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-6 col-md-9">
+                    <div class="col-lg-3 col-md-6" style="padding-top: 40px;padding-bottom: 60px;">
                         <div class="tab-content">
                             <div class="tab-pane active" id="tabs-1" role="tabpanel">
                                 <div class="product__details__pic__item">
                                     <img src="{{ prod.icon }}" alt="">
                                 </div>
                             </div>
-                            <div class="tab-pane" id="tabs-2" role="tabpanel">
-                                <div class="product__details__pic__item">
-                                    <img src="img/shop-details/product-big-3.png" alt="">
-                                </div>
-                            </div>
-
                         </div>
+                    </div>
+                    <div class="col-lg-9 col-md-6" style="border-left: #e5e5e5;border-left-width: 5px;border-left-style: outset; padding-bottom: 15px ;margin-top:0%;padding-bottom: 0px">
+                        <div class="container-fluid>" style="padding-top: 40px;padding-bottom: 60px;">
+                            <div class="product__details__text" style="text-align: left;padding-left: 25%">
+                            <h3>{{ prod.name}}</h3>
+                                    <div class="rating">
+                                {% for _ in prod.nStars %}
+                                 <i class="fa fa-star"></i>
+                            {% endfor %}
+                            {% for _ in prod.nEmptyStars %}
+                                 <i class="fa fa-star-o"></i>
+                            {% endfor %}
+                                <span> Review{{ revs | pluralize }}( {{ revs | length }} ) </span>
+                            </div>
+                            <p>{{ prod.description }}</p>
+                            <h3>{{ purch }} <span style="text-decoration: none;color: #403d3d">Total Purchases</span></h3>
+
+                            <div class="product__details__last__option">
+                            <div style="padding-bottom:15px">
+                                <ul>
+                                    <span>Categories:</span>
+                                    {% for cat in prod.category.all %}
+                                       <li> {{ cat }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                             <div class="product__details__btns__option">
+                                <a href="#"><i class="fa fa-heart"></i> add to Favorites</a>
+                            </div>
+                            </div>
+                            </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -69,36 +57,8 @@
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <div class="product__details__text">
-                            <h4>{{ prod.name}}</h4>
-                            <div class="rating">
-                                {% for _ in prod.nStars %}
-                                 <i class="fa fa-star"></i>
-                            {% endfor %}
-                            {% for _ in prod.nEmptyStars %}
-                                 <i class="fa fa-star-o"></i>
-                            {% endfor %}
-                                <span> Review{{ revs | pluralize }}( {{ revs | length }} ) </span>
-                            </div>
-                            <h3>$270.00 <span>70.00</span></h3>
-                            <p>{{ prod.description }}</p>
-
-
-                            <div class="product__details__btns__option">
-                                <a href="#"><i class="fa fa-heart"></i> add to Favorites</a>
-                                <a href="#"><i class="fa fa-exchange"></i> Add To Compare</a>
-                            </div>
-                            <div class="product__details__last__option">
-                            <div style="padding-bottom: 15%">
-                                <ul>
-                                    <span>Categories:</span>
-                                    {% for cat in prod.category.all %}
-                                       <li> {{ cat }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                             <h5><span>Guaranteed Safe Checkout</span></h5>
+                             <h2><span>Check the Pricing Plans!</span></h2>
                                 <img src="img/shop-details/details-payment.png" alt="">
-                            {% if prodbenefs %}
                                  <div class="pricing card-deck flex-column flex-md-row mb-3 ">
 
                                 {% for plan in plans %}
@@ -115,29 +75,7 @@
                                         </div>
                                     </div>
                                  {% endfor %}
-
                                 </div>
-                             {% else %}
-                                <div class="pricing card-deck flex-column flex-md-row mb-3 ">
-                                    <div class="card card-pricing text-center px-3 mb-4">
-                                        <span class="primary-btn w-60 mx-auto rounded-bottom px-4 py-1"  style="background: #c82333;font-size: 12px">Normal</span>
-                                        <div class="bg-transparent card-header pt-4 border-0">
-                                            <h1 class="h1 font-weight-normal text-primary text-center mb-0" data-pricing-value="60">$<span class="price">12</span><span class="h6 text-muted ml-2">/ per month</span></h1>
-                                        </div>
-                                        <div class="card-body pt-0">
-                                            <ul class="list-unstyled mb-4">
-                                                <li>Up to 5 users</li>
-                                                <li>Basic support on Github</li>
-                                                <li>Monthly updates</li>
-                                                <li>Free cancelation</li>
-                                            </ul>
-                                            <a href="#" class="primary-btn">Order now</a>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            {% endif %}
-
                             </div>
                         </div>
                     </div>
@@ -161,11 +99,12 @@
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tabs-5" role="tabpanel">
                                     <div class="product__details__tab__content">
+                                        <div class="container">
                                         <p class="note">Product Information</p>
                                         <div class="product__details__tab__content__item">
                                             <p>{{ prod.description }}</p>
                                         </div>
-
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="tabs-6" role="tabpanel">
@@ -213,6 +152,7 @@
                                 </div>
                                 <div class="tab-pane" id="tabs-7" role="tabpanel">
                                     <div class="product__details__tab__content">
+                                    <div class="container">
                                         {% if prodbenefs  %}
                                         {% for benefit in prodbenefs %}
                                         <div class="product__details__tab__content__item">
@@ -223,6 +163,7 @@
                                         {% else %}
                                         <h4 class="text-center">The Developer hasn't defined any benefit for this app!</h4>
                                         {% endif %}
+                                    </div>
                                     </div>
                                 </div>
                             </div>

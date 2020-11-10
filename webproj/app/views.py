@@ -178,9 +178,11 @@ def prodDetails(request,idprod):
     pricing=Product_Pricing_Plan.objects.filter(product=product)
     categories=product.category.all()
     print(categories)
+    print(Purchase.objects.filter(product=product))
+    totalpurchases=Purchase.objects.filter(product__exact=product).count()
     ##except:
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
-    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits, 'plans':pricing})
+    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits, 'plans':pricing,'purch':totalpurchases})
 
 
 
