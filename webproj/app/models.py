@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Developer(models.Model):
     name=models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Category(models.Model):
     title=models.CharField(max_length=50,unique=True)
@@ -18,11 +19,13 @@ class Product(models.Model):
     description=models.CharField(max_length=50)
     category=models.ManyToManyField(Category)
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD
     favorites=models.ManyToManyField(Product, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return str(self.user.username) + ", " + str( self.user.email)
 
@@ -31,6 +34,7 @@ class Client(models.Model):
 class Purchase(models.Model):
     client=models.ForeignKey(Client,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Prod_Benefits(models.Model):
     title=models.CharField(max_length=50)
@@ -48,6 +52,7 @@ class Reviews(models.Model):
     )
     date=models.DateField()
     body=models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Product_Pricing_Plan(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
