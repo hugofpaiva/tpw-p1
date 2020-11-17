@@ -8,7 +8,7 @@
         <div class="product__details__pic"  style="padding-top:0px;padding-bottom: 0px">
             <div class="container" >
                 <div class="row">
-                    <div class="col-lg-3 col-md-6" style="padding-top: 40px;padding-bottom: 60px;">
+                    <div class="col-lg-3 col-md-9" style="padding-top: 40px;padding-bottom: 60px;">
                         <div class="tab-content">
                             <div class="tab-pane active" id="tabs-1" role="tabpanel">
                                 <div class="product__details__pic__item">
@@ -17,9 +17,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-9 col-md-6" style="border-left: #e5e5e5;border-left-width: 5px;border-left-style: outset; padding-bottom: 15px ;margin-top:0%;padding-bottom: 0px">
+                    <div class="col-lg-9 col-md-6" style=" padding-bottom: 15px ;margin-top:0%;padding-bottom: 0px">
                         <div class="container-fluid>" style="padding-top: 40px;padding-bottom: 60px;">
-                            <div class="product__details__text" style="text-align: left;padding-left: 25%">
+                            <div class="product__details__text" style=" border-left: #e5e5e5;border-left-width: 5px;border-left-style: outset; text-align: left;margin-left: 20%;padding-left: 18px;">
                             <h3>{{ prod.name}}</h3>
                                     <div class="rating">
                                 {% for _ in prod.nStars %}
@@ -90,7 +90,7 @@
                                     role="tab">Description</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Review{{ revs | pluralize }}( {{ revs | length }} )</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Review{{ revs | pluralize }}( {{ numreviews }} )</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Product Benefits</a>
@@ -148,6 +148,22 @@
                                         {% else %}
                                         <h4 class="text-center">There are no Reviews for this Product!</h4>
                                         {% endif %}
+                                        <div class="pagination container">
+                                            <span class="step-links" style="padding-left: 41%">
+                                                <span class="current" >
+                                                    <h5 class="text-center">Page {{ revs.number }} of {{ revs.paginator.num_pages }} Reviews </h5>
+                                                </span>
+                                                 {% if revs.has_previous %}
+                                                    <a  style="padding: 10px;" href="?page=1">&laquo; first</a>
+                                                    <a  style="padding: 10px;" href="?page={{ revs.previous_page_number }}">previous</a>
+                                                {% endif %}
+
+                                                {% if revs.has_next %}
+                                                    <a style="padding: 10px;" href="?page={{ revs.next_page_number }}">next</a>
+                                                    <a style="padding-left: 10px" href="?page={{ revs.paginator.num_pages }}">last &raquo;</a>
+                                                {% endif %}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="tabs-7" role="tabpanel">

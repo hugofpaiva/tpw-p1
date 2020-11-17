@@ -1,5 +1,6 @@
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
 from app.forms import *
@@ -77,7 +78,6 @@ def shopSearchView(request, prodName, pageNumber):
     totalPages = round(totalProducts/12)
 
     categories = Category.objects.all()
-
     developers = Developer.objects.all()
 
     if totalPages == 0:
@@ -163,6 +163,10 @@ def prodDetails(request,idprod):
     #try:
     product=Product.objects.get(id=idprod)
     reviews=Reviews.objects.filter(product=product)
+    paginator = Paginator(reviews,1) #shows 1 review per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    numreviews = reviews.count()
     for review in reviews:
         review.nStars=range(int(review.rating))
         review.nEmptyStars=range(5-int(review.rating))
@@ -182,7 +186,7 @@ def prodDetails(request,idprod):
     totalpurchases=Purchase.objects.filter(product__exact=product).count()
     ##except:
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
-    return render(request,'productdetails.html',{'prod':product, 'revs':reviews, 'prodbenefs':productbenefits, 'plans':pricing,'purch':totalpurchases})
+    return render(request,'productdetails.html',{'prod':product, 'revs':page_obj, 'prodbenefs':productbenefits, 'plans':pricing,'purch':totalpurchases, 'numreviews': numreviews})
 
 
 
