@@ -190,26 +190,33 @@ def prodDetails(request,idprod):
 
 
 
+def fill_form(client):
+    form = UpdateClientForm()
+    form.fields['username'].initial = client.user.username
+    form.fields['first_name'].initial = client.user.first_name
+    form.fields['last_name'].initial = client.user.last_name
+    form.fields['email'].initial = client.user.email
+    return form
 
-
-
-
+#ver isto melhor ta cancro como a merda
 def accountDetails(request):
 
     user = User.objects.get(username=request.user.username)
-
+    client= Client.objects.get(user_id=user.id)
     if request.method == "POST":
         form = UpdateClientForm(request.POST, instance=request.user)
         if form.is_valid():
             update = form.save()
-            update.user = request.user
+            print(update)
+            update.client = request.user
+            client=Client.objects.get(user_id=update.client.id)
             update.save()
             update.refresh_from_db()
             #to stay logged in
-            login(request, update.user)
-            return render(request,'index.html',{'activelem': 'home'})
+
+            login(request, update.client)
+            form=fill_form(client)
+            return render(request,'clientdetails.html',{'user': client, 'form': form})
     else:
-        form = SignUpForm()
-
-
-    return render(request, 'clientdetails.html', {'user': user, 'form': form})
+        form=fill_form(client)
+    return render(request, 'clientdetails.html', {'user': client, 'form': form})
