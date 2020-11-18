@@ -1,4 +1,4 @@
-from django.http import HttpResponseNotFound, HttpResponse
+from django.http import HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
@@ -153,7 +153,7 @@ def shopView(request, pageNumber=1):
 
 def register(request):
     if request.method == "POST":
-        myform = SignUpForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             user.refresh_from_db()
@@ -162,26 +162,44 @@ def register(request):
             return render(request, 'index.html', {'activelem': 'home'})
     else:
         form = SignUpForm()
-    return render(request, 'register.html', {'form': form})
+        return render(request, 'register.html', {'form': form})
 
 
 def prodDetails(request, idprod):
+    product = Product.objects.get(id=idprod)
     if request.method == "POST":
-        form= proceedtoCheckoutForm(request.POST)
+        form = proceedtoCheckoutForm(request.POST)
         if form.is_valid():
-            form_prodid= form.cleaned_data.get("productid")
+            form_prodid = form.cleaned_data.get("productid")
             if idprod != form_prodid:
-                return  HttpResponseNotFound("Something went wrong!")
-            paymenttype= form.cleaned_data.get("paymenttype")
-            valuetopay= Product_Pricing_Plan.objects.get(id=paymenttype)
+                return HttpResponseNotFound("Something went wrong!")
+
+            paymenttype = form.cleaned_data.get("paymenttype")
+            valuetopay = Product_Pricing_Plan.objects.get(id=paymenttype)
             print(valuetopay.price)
-            return   HttpResponse("Sucess!")
-            #
+            client = Client.objects.filter(user_id=request.user.id)
+            client = client[0]
+
+            if client.balance < valuetopay.price:
+                return HttpResponse("You do not have enough credit!")
+            p = Purchase.objects.filter(client=client, product=product)
+            print(p)
+            #only assert that the user does not have the same product twice
+            if p.exists():
+                return HttpResponse("Product already bought")
+            else:
+                # already verified before if this is the correct product
+                p = Purchase(client=client, product=product)
+                client.balance -= valuetopay.price
+                client.save()
+                p.save()
+                return HttpResponse("Sucess!")
+
 
     else:
         myform = proceedtoCheckoutForm()
         # try:
-        product = Product.objects.get(id=idprod)
+
         reviews = Reviews.objects.filter(product=product)
         paginator = Paginator(reviews, 1)  # shows 1 review per page
         page_number = request.GET.get('page')
@@ -208,7 +226,7 @@ def prodDetails(request, idprod):
         ##return HttpResponseNotFound('<h1>Page not found</h1>')
         return render(request, 'productdetails.html',
                       {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits, 'plans': pricing,
-                       'purch': totalpurchases, 'numreviews': numreviews, 'myform':myform})
+                       'purch': totalpurchases, 'numreviews': numreviews, 'myform': myform})
 
 
 def fill_form(client):
