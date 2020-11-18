@@ -214,6 +214,7 @@ def accountDetails(request):
             update.refresh_from_db()
             #to stay logged in
 
+            #Because after changes in account, the system logout the user
             login(request, update.client)
             form=fill_form(client)
             return render(request,'clientdetails.html',{'user': client, 'form': form})
