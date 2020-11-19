@@ -36,3 +36,7 @@ class UpdatePasswordForm(PasswordChangeForm):
         fields = {'old_password', 'new_password1', 'new_password2'}
 
 
+
+class proceedtoCheckoutForm(forms.Form):
+    productid=forms.IntegerField()
+    paymenttype=forms.IntegerField()

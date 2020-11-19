@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% load  static %}
 {% block content %}
 <body>
 
@@ -71,7 +72,7 @@
                                             <ul class="list-unstyled mb-4">
                                                 <li>{{ plan.feature }}</li>
                                             </ul>
-                                            <a href="#" class="primary-btn">Order now</a>
+                                            <a  href="#" class="primary-btn" onclick="get_payment( {{ plan.id }} )" data-toggle="modal" data-target="#myModal" >Order now</a>
                                         </div>
                                     </div>
                                  {% endfor %}
@@ -194,7 +195,56 @@
     </section>
     <!-- Shop Details Section End -->
 
+    <!-- Product Checkout-->
 
+<!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
 
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Purchase Confirmation</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+         <form id="myForm" name="myFormName" method="post" action=".">
+
+      <div class="modal-body">
+        Are you Sure you want to buy this product?
+            {% csrf_token %}
+            {% for field in myform %}
+                <p>
+            {{ field.as_hidden}}
+            {% endfor %}
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+       <button type="button"  onclick="proceed_checkout()" class="btn btn-success" data-dismiss="modal">Confirm Purchase</button>
+      </div>
+    </form>
+
+    </div>
+  </div>
+</div>
+{% block javascript %}
+<script>
+    var type_payment=null
+    function get_payment (id) {
+        type_payment=id
+        console.log(type_payment)
+    }
+     function  proceed_checkout( ) {
+        $("#id_productid").val({{ prod.id }})
+        console.log("alalal" + type_payment)
+        $("#id_paymenttype").val(type_payment)
+         $("#myForm").submit();
+    }
+</script>
+{% endblock javascript %}
 </body>
+
 {%  endblock %}

@@ -33,4 +33,7 @@ urlpatterns = [
 
     #account
     path('account/', views.accountDetails, name="accountDetails"),
+
+    #purchaseView
+    path('shop/checkout/<int:num>', views.complete_transaction, name='complete_transaction')
 ]

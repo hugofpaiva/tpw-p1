@@ -26,6 +26,7 @@ class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD
     favorites=models.ManyToManyField(Product, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    balance = models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
     def __str__(self):
         return str(self.user.username) + ", " + str( self.user.email)
 
