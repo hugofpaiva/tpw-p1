@@ -7,6 +7,11 @@ from app.forms import *
 from app.models import *
 import random
 from django.contrib.auth import authenticate, login
+
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
 # Create your views here.
 
 #foi a maneira mais facil q arranjei para saber qual o elemento ativo na navbar, ja que o shop vai extender o base.html(navbars e essas merdas)
@@ -202,22 +207,40 @@ def fill_form(client):
 def accountDetails(request):
 
     user = User.objects.get(username=request.user.username)
-    client= Client.objects.get(user_id=user.id)
+    client = Client.objects.get(user_id=user.id)
     if request.method == "POST":
         form = UpdateClientForm(request.POST, instance=request.user)
-        if form.is_valid():
-            update = form.save()
-            print(update)
-            update.client = request.user
-            client=Client.objects.get(user_id=update.client.id)
-            update.save()
-            update.refresh_from_db()
-            #to stay logged in
+        form_pw = UpdatePasswordForm(request.user, request.POST)
+        if 'old_password' not in request.POST:
+            print("fields")
+            if form.is_valid():
+                update = form.save()
+                update.client = request.user
+                client = Client.objects.get(user_id=update.client.id)
+                update.save()
+                update.refresh_from_db()
+                #to stay logged in
 
-            #Because after changes in account, the system logout the user
-            login(request, update.client)
-            form=fill_form(client)
-            return render(request,'clientdetails.html',{'user': client, 'form': form})
+                #Because after changes in account, the system logout the user
+                login(request, update.client)
+                form=fill_form(client)
+                return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw})
+        else:
+            print("pw")
+            if form_pw.is_valid():
+                user = form_pw.save()
+                update_session_auth_hash(request, form_pw.user)
+                user.client = request.user
+                client = Client.objects.get(user_id=user.client.id)
+                user.save()
+                user.refresh_from_db()
+                #to stay logged in
+
+                #Because after changes in account, the system logout the user
+                login(request, user.client)
+                form = fill_form(client)
+                return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form})
     else:
-        form=fill_form(client)
-    return render(request, 'clientdetails.html', {'user': client, 'form': form})
+        form = fill_form(client)
+        form_pw = UpdatePasswordForm(request.user)
+    return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw})
