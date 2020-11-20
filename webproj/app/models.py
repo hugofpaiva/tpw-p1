@@ -21,6 +21,8 @@ class Product(models.Model):
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+    #def __str__(self):
+    #    return str(self.name) + ", " + str(self.category)
 
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD

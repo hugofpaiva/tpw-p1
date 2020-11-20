@@ -268,6 +268,11 @@ def complete_transaction(request, num):
 def accountDetails(request):
     user = User.objects.get(username=request.user.username)
     client = Client.objects.get(user_id=user.id)
+
+    # favourites
+    fav = client.favorites.all()
+    print(fav[0].category.all())
+
     if request.method == "POST":
         form = UpdateClientForm(request.POST, instance=request.user)
         form_pw = UpdatePasswordForm(request.user, request.POST)
@@ -284,7 +289,7 @@ def accountDetails(request):
                 #Because after changes in account, the system logout the user
                 login(request, update.client)
                 form=fill_form(client)
-                return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw})
+                return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
         else:
             print("pw")
             if form_pw.is_valid():
@@ -299,8 +304,9 @@ def accountDetails(request):
                 #Because after changes in account, the system logout the user
                 login(request, user.client)
                 form = fill_form(client)
-                return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form})
+                return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form, 'favourites': fav})
     else:
         form = fill_form(client)
         form_pw = UpdatePasswordForm(request.user)
-    return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw})
+
+    return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
