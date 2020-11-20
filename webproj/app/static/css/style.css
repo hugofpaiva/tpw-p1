@@ -1052,6 +1052,7 @@ ol {
 .product__item__text {
 	padding-top: 25px;
 	position: relative;
+	cursor: pointer;
 }
 
 .product__item__text a {

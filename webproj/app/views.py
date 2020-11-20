@@ -105,12 +105,23 @@ def shopSearchView(request, prodName, pageNumber):
                                        'totalPages': totalPages,'actualPage':pageNumber,'leftPages':leftPages,
                                        'rangeLeftPages': rangeLeftPages, 'categories':categories, 'developers': developers})
 
-def shopView(request, pageNumber=1):
+def shopView(request):
+
+    if request.GET.get('page') is None:
+        pageNumber=1
+    else:
+        pageNumber = int(request.GET.get('page'))
+
     if pageNumber<1:
         return render(request, 'notfound.html')
 
     offset = (pageNumber-1)*12
-    products = Product.objects.all()
+    parameters = {field_name: value for field_name, value in request.GET.items()
+                 if value and field_name in Product._meta.get_fields}
+    print(parameters)
+    print(Product._meta.get_fields())
+    products = Product.objects.filter()
+    print(products)
     productsOffset = products[offset:offset+12]
     totalProducts=products.count()
 

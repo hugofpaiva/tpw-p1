@@ -214,3 +214,14 @@
     });
 
 })(jQuery);
+
+function insertParam(dict){
+let url = new URL(window.location.href);
+
+Object.entries(dict).forEach(([k,v]) => {
+    url.searchParams.set(k, v);
+})
+
+window.location.href = url;
+
+}
