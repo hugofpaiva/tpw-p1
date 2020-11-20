@@ -3,6 +3,16 @@
 {% load  static %}
 {% block content %}
 <body>
+    {% if  errors is not None %}
+       <div class="alert alert-danger" role="alert">
+            {{ errors }}
+        </div>
+    {% endif %}
+    {% if  successes is not None %}
+       <div class="alert alert-success" role="alert">
+            {{ successes }}
+        </div>
+    {% endif %}
 
     <!-- Shop Details Section Begin -->
     <section class="shop-details">

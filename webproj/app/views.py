@@ -1,4 +1,4 @@
-from django.http import HttpResponseNotFound, HttpResponse, Http404
+from django.http import HttpResponseNotFound, HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
@@ -215,15 +215,14 @@ def prodDetails(request, idprod):
             print(valuetopay.price)
             client = Client.objects.filter(user_id=request.user.id)
             client = client[0]
-
             p = Purchase.objects.filter(client=client, product=product)
             #only assert that the user does not have the same product twice
-            print(p[0].has_paid_until() )
             if p.exists() and p[0].has_paid_until() :
-                return HttpResponse("Product already bought")
+                request.session.__setitem__("last_request_error","You already have this product!")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             if client.balance < valuetopay.price:
-                return HttpResponse("You do not have enough credit!")
-
+                request.session.__setitem__("last_request_error","You do not have enough credit to complete the purchase!")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             else:
                 # already verified before if this is the correct product
                 p = Purchase(client=client, product=product)
@@ -240,13 +239,13 @@ def prodDetails(request, idprod):
                 client.balance -= valuetopay.price
                 client.save()
                 p.save()
-                return HttpResponse("Sucess!")
+                request.session.__setitem__("last_request_success", "SUCCESS_PURCHASE")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
     else:
         myform = proceedtoCheckoutForm()
         # try:
-
         reviews = Reviews.objects.filter(product=product)
         paginator = Paginator(reviews, 1)  # shows 1 review per page
         page_number = request.GET.get('page')
@@ -266,14 +265,16 @@ def prodDetails(request, idprod):
         productbenefits = Prod_Benefits.objects.filter(product=product)
         pricing = Product_Pricing_Plan.objects.filter(product=product)
         categories = product.category.all()
-        print(categories)
-        print(Purchase.objects.filter(product=product))
         totalpurchases = Purchase.objects.filter(product__exact=product).count()
-        ##except:
-        ##return HttpResponseNotFound('<h1>Page not found</h1>')
-        return render(request, 'productdetails.html',
-                      {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits, 'plans': pricing,
-                       'purch': totalpurchases, 'numreviews': numreviews, 'myform': myform})
+        data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits, 'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'myform': myform , 'errors' : None}
+        if  request.session.get("last_request_error") is not None:
+            print("cucu")
+            data["errors"]  = request.session.get("last_request_error")
+            del request.session["last_request_error"]
+        if   request.session.get("last_request_success") is not None:
+            data["successes"] = request.session.get("last_request_success")
+            del request.session["last_request_success"]
+        return render(request, 'productdetails.html', data)
 
 
 def fill_form(client):
@@ -285,15 +286,6 @@ def fill_form(client):
     return form
 
 
-@csrf_exempt
-def complete_transaction(request, num):
-    print("crl")
-    if request.method == 'POST':
-        print("entrei!")
-        print(request.id)
-        print(num)
-        return HttpResponse('')
-
 
 # ver isto melhor ta cancro como a merda
 def accountDetails(request):
@@ -302,13 +294,11 @@ def accountDetails(request):
 
     # favourites
     fav = client.favorites.all()
-    print(fav[0].category.all())
 
     if request.method == "POST":
         form = UpdateClientForm(request.POST, instance=request.user)
         form_pw = UpdatePasswordForm(request.user, request.POST)
         if 'old_password' not in request.POST:
-            print("fields")
             if form.is_valid():
                 update = form.save()
                 update.client = request.user
@@ -322,7 +312,6 @@ def accountDetails(request):
                 form=fill_form(client)
                 return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
         else:
-            print("pw")
             if form_pw.is_valid():
                 user = form_pw.save()
                 update_session_auth_hash(request, form_pw.user)
