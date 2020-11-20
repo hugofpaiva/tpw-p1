@@ -7,7 +7,8 @@ from app.forms import *
 from app.models import *
 import random
 from django.contrib.auth import authenticate, login
-
+import datetime
+import calendar
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -21,8 +22,10 @@ from django.views.decorators.csrf import csrf_exempt
 def indexView(request):
     numBanners = random.randint(2, 6)
     productsBanner = []
-    totalProds = Product.objects.count()
 
+    tot_purch = []
+    totalProds = Product.objects.count()
+    Product.objects = Product.objects.filter()
     for _ in range(numBanners):
         index = random.randint(0, totalProds - 1)
 
@@ -181,6 +184,23 @@ def register(request):
         return render(request, 'register.html', {'form': form})
 
 
+def datetime_offset_by_months(datetime_origin, n=1):
+
+    one_day = datetime.timedelta(days=1)
+    q, r = divmod(datetime_origin.month + n, 12)
+
+    datetime_offset = datetime.datetime(
+        datetime_origin.year + q, r + 1, 1) - one_day
+
+    if datetime_origin.month != (datetime_origin + one_day).month:
+        return datetime_offset
+
+    if datetime_origin.day >= datetime_offset.day:
+        return datetime_offset
+
+    return datetime_offset.replace(day= datetime_origin.day)
+
+
 def prodDetails(request, idprod):
     product = Product.objects.get(id=idprod)
     if request.method == "POST":
@@ -196,16 +216,27 @@ def prodDetails(request, idprod):
             client = Client.objects.filter(user_id=request.user.id)
             client = client[0]
 
+            p = Purchase.objects.filter(client=client, product=product)
+            #only assert that the user does not have the same product twice
+            print(p[0].has_paid_until() )
+            if p.exists() and p[0].has_paid_until() :
+                return HttpResponse("Product already bought")
             if client.balance < valuetopay.price:
                 return HttpResponse("You do not have enough credit!")
-            p = Purchase.objects.filter(client=client, product=product)
-            print(p)
-            #only assert that the user does not have the same product twice
-            if p.exists():
-                return HttpResponse("Product already bought")
+
             else:
                 # already verified before if this is the correct product
                 p = Purchase(client=client, product=product)
+                if valuetopay.plan_type != 'FREE':
+                    if valuetopay.plan_type == 'MONTHLY':
+                        print(datetime.date.today())
+                        p.set_paid_until(datetime_offset_by_months(datetime.date.today()))
+                    else:
+                        oneyear = datetime.date.today()
+                        for i in range (1,13):
+                            oneyear= datetime_offset_by_months(oneyear)
+                        p.set_paid_until(oneyear)
+
                 client.balance -= valuetopay.price
                 client.save()
                 p.save()
@@ -310,3 +341,5 @@ def accountDetails(request):
         form_pw = UpdatePasswordForm(request.user)
 
     return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
+
+
