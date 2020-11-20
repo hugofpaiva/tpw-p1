@@ -4,7 +4,7 @@
 
 -> index : Sign in, Log in, Nav pesquisa, Mais vendidos...
 
--> admin : Ver compras, users, novas apps e editar apps existentes
+-> admin : Ver compras, users, novas apps, editar apps existentes e estatística
 
 -> Log page : email/username, pass, forgetpass (perguntar ao prof), create new account
 
@@ -26,7 +26,8 @@
 -> admin , usar apenas superuser? (signups..)
 -> Necessita de ser responsivo
 -> Tem de ter forgetpass?
--> Podemos criar o cliente na view?
 -> Ratings dos produtos
+-> Pagamentos mensais, anuais...
+-> Acho que a ideia que temos chega
 
 its all for todays folks!
