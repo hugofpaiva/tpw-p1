@@ -36,7 +36,14 @@ class Purchase(models.Model):
     client=models.ForeignKey(Client,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    available_until= models.DateField(null=True, blank=True)
+    def set_paid_until(self,date):
+        self.available_until=date
+        self.save()
+    def has_paid_until(self,current_date):
+        # if this parameter is None, then i
+        if self.available_until is None : return  True
+        return self.available_until
 class Prod_Benefits(models.Model):
     title=models.CharField(max_length=50)
     description=models.CharField(max_length=500)
@@ -57,6 +64,11 @@ class Reviews(models.Model):
 
 class Product_Pricing_Plan(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
-    plan_type=models.CharField(max_length=35)
+    plans = (
+        ('FREE', 'Free Plan'),
+        ('MONTHLY_BASIC', 'Monthly Basic'),
+        ('ANNUAL', 'Annual Pro'),
+    )
+    plan_type=models.CharField(max_length=25, choices=plans, default='FREE')
     price=models.DecimalField(max_digits=5,decimal_places=2)
     feature=models.CharField(max_length=100)
