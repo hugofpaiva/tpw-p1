@@ -24,6 +24,7 @@
           <div class="list-group list-group-flush account-settings-links">
             <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">General</a>
             <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-change-password">Change password</a>
+            <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-favourites">Favourites</a>
             <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-info">Info</a>
             <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-social-links">Social links</a>
             <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-connections">Connections</a>
@@ -102,6 +103,35 @@
 
                 </form>
 
+              </div>
+            </div>
+            <div class="tab-pane fade" id="account-favourites">
+              <div class="card-body pb-2">
+                <table class="table" width="100%">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Icon</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">State</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for fav in favourites %}
+                        <tr>
+                          <td scope="row"><div class="product__item__pic set-bg" style="width:50px; height:50px;" data-setbg="{{ fav.icon }}"></div></td>
+                          <td>{{ fav.name }}</td>
+                          <td>
+                              {% for c in fav.category.all %}
+                                  {{ c  }}
+                              {% endfor %}
+
+                          </td>
+                          <td></td>
+                        </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="tab-pane fade" id="account-info">
