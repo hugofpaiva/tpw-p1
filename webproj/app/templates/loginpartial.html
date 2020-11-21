@@ -7,7 +7,7 @@
 
 <a href="#"> <img src="{% static "img/icon/user.png" %}" alt=""/> </a>
 
-<a>{{ user }}</a>
+<a href="/account/">{{ user }}</a>
 
 <form id="logoutForm" action="/logout" method="get">
 	{% csrf_token %}
