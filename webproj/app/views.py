@@ -166,7 +166,7 @@ def shopView(request):
         product.nEmptyStars = range(5 - int(product.rate))
     return render(request, 'shop.html',
                   {'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
-                   'totalPages': totalPages, 'actualPage': pageNumber, 'leftPages': leftPages,
+                        'totalPages': totalPages, 'actualPage': pageNumber, 'leftPages': leftPages,
                    'rangeLeftPages': rangeLeftPages, 'categories': categories, 'developers': developers})
 
 
@@ -200,57 +200,93 @@ def datetime_offset_by_months(datetime_origin, n=1):
 
     return datetime_offset.replace(day= datetime_origin.day)
 
+#class used to process valid forms in the products view
+class Products_Forms_Processing:
+
+    def __init__(self,client,product):
+        self.client=client
+        self.product=product
+    def check_curr_form(self,form,request):
+        if isinstance(form,PurchaseForm):
+            return self.payment_form_process(form,request)
+        elif isinstance(form,FavoritesForm):
+            print("cuuuuu")
+            return self.favorites_form_process(form, request)
+        else:
+            return  Http404("Something went wrong")
+
+
+    def payment_form_process(self, form,request):
+        paymenttype = form.cleaned_data.get("paymenttype")
+        valuetopay = Product_Pricing_Plan.objects.get(id=paymenttype)
+        print(valuetopay.price)
+        p = Purchase.objects.filter(client=self.client, product=self.product)
+        #check if client has already the product
+        if p.exists() and p[0].has_paid_until():
+            request.session.__setitem__("last_request_error", "You already have this product!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        #check if the client has enough balance
+        elif self.client.balance < valuetopay.price:
+            request.session.__setitem__("last_request_error", "You do not have enough credit to complete the purchase!")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        #process the purchase
+        else:
+            if valuetopay.plan_type != 'FREE':
+                if valuetopay.plan_type == 'MONTHLY':
+                    print(datetime.date.today())
+                    p.set_paid_until(datetime_offset_by_months(datetime.date.today()))
+                else:
+                    oneyear = datetime.date.today()
+                    for i in range(1, 13):
+                        oneyear = datetime_offset_by_months(oneyear)
+                    p.set_paid_until(oneyear)
+            self.client.balance -= valuetopay.price
+            self.client.save()
+            p.save()
+            request.session.__setitem__("last_request_success", "Success in the completion of the purchase!" )
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    def favorites_form_process(self, form,request):
+        print("ola")
+        client_favorites=self.client.favorites.all()
+        if self.product not in client_favorites:
+            self.client.favorites.add(self.product)
+            request.session.__setitem__("last_request_success", "Product " + self.product.name + " successfully added to your favorites!")
+        else:
+            self.client.favorites.remove(self.product)
+            request.session.__setitem__("last_request_success", "Product " + self.product.name + " successfully removed to your favorites!")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def prodDetails(request, idprod):
     product = Product.objects.get(id=idprod)
+    client = Client.objects.filter(user_id=request.user.id)
+    client = client[0]
     if request.method == "POST":
-        form = proceedtoCheckoutForm(request.POST)
-        if form.is_valid():
-            form_prodid = form.cleaned_data.get("productid")
-            if idprod != form_prodid:
-                return HttpResponseNotFound("Something went wrong!")
-
-            paymenttype = form.cleaned_data.get("paymenttype")
-            valuetopay = Product_Pricing_Plan.objects.get(id=paymenttype)
-            print(valuetopay.price)
-            client = Client.objects.filter(user_id=request.user.id)
-            client = client[0]
-            p = Purchase.objects.filter(client=client, product=product)
-            #only assert that the user does not have the same product twice
-            if p.exists() and p[0].has_paid_until() :
-                request.session.__setitem__("last_request_error","You already have this product!")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            if client.balance < valuetopay.price:
-                request.session.__setitem__("last_request_error","You do not have enough credit to complete the purchase!")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            else:
-                # already verified before if this is the correct product
-                p = Purchase(client=client, product=product)
-                if valuetopay.plan_type != 'FREE':
-                    if valuetopay.plan_type == 'MONTHLY':
-                        print(datetime.date.today())
-                        p.set_paid_until(datetime_offset_by_months(datetime.date.today()))
-                    else:
-                        oneyear = datetime.date.today()
-                        for i in range (1,13):
-                            oneyear= datetime_offset_by_months(oneyear)
-                        p.set_paid_until(oneyear)
-
-                client.balance -= valuetopay.price
-                client.save()
-                p.save()
-                request.session.__setitem__("last_request_success", "SUCCESS_PURCHASE")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
+        print(request.session)
+        form_purchases,form_favorites = PurchaseForm(request.POST),FavoritesForm(request.POST)
+        response=None
+        handler = Products_Forms_Processing(client, product)
+        if form_purchases.is_valid():
+            print(form_purchases.cleaned_data.items())
+            response=handler.check_curr_form(form_purchases,request)
+        elif form_favorites.is_valid():
+            handler = Products_Forms_Processing(client, product)
+            response = handler.check_curr_form(form_favorites, request)
+        return response
     else:
-        myform = proceedtoCheckoutForm()
-        # try:
+        form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
         reviews = Reviews.objects.filter(product=product)
+        numreviews = reviews.count()
+        # --- Django Pagination ---
         paginator = Paginator(reviews, 1)  # shows 1 review per page
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        numreviews = reviews.count()
+        # ------------------------
+        # check if product is already, or not, added to the client's favorites
+        is_fav=False
+        if product in client.favorites.all(): is_fav=True
+
         for review in reviews:
             review.nStars = range(int(review.rating))
             review.nEmptyStars = range(5 - int(review.rating))
@@ -260,13 +296,13 @@ def prodDetails(request, idprod):
             product.rate = rate
         else:
             product.rate = 0
-        product.nStars = range(int(product.rate))
-        product.nEmptyStars = range(5 - int(product.rate))
+        product.nStars, product.nEmptyStars  = range(int(product.rate)),range(5 - int(product.rate))
         productbenefits = Prod_Benefits.objects.filter(product=product)
         pricing = Product_Pricing_Plan.objects.filter(product=product)
         categories = product.category.all()
         totalpurchases = Purchase.objects.filter(product__exact=product).count()
-        data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits, 'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'myform': myform , 'errors' : None}
+        data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
+               'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases, ' form_fav':form_favorites, 'is_fav': is_fav }
         if  request.session.get("last_request_error") is not None:
             print("cucu")
             data["errors"]  = request.session.get("last_request_error")
