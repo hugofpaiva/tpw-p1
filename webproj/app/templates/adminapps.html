@@ -2,12 +2,16 @@
 
 {% load  static %}
 {% block content %}
-    <head>
+    <head xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
-
+    <body>
     <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
-
+     {% if  success is not None %}
+       <div class="alert alert-success" role="alert">
+            {{ success }}
+        </div>
+    {% endif %}
     <h4 class="font-weight-bold py-3 mb-4">
       Admin settings
     </h4>
@@ -46,7 +50,8 @@
                                  {% endfor %}
 
                              </td>
-                             <td align="center"><a href="/shop/product/{{ p.id }}/"><button style="width: 50%;" class="site-btn">Edit</button></a></td>
+
+                             <td align="center"><a href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%;" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
@@ -65,6 +70,69 @@
 
 
 
+<!-- The Modal -->
+
+<div class="modal" id="modalEditForm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Product</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+         <form id="myForm" name="myFormName" method="post" action=".">
+
+      <div class="modal-body">
+        Edit here this product data
+      <br>
+      <br>
+            {% csrf_token %}
+            {% for field in form %}
+
+                {% if field.name == 'prod' %}
+                    {{ field.as_hidden }}
+               {% else %}
+                      <p>
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        {% for error in field.errors %}
+                          <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                      </p>
+                {% endif %}
+            {% endfor %}
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="site-btn" data-dismiss="modal">Cancel</button>
+       <button type="button"  onclick="proceed_edit()" class="site-btn" data-dismiss="modal">Confirm Purchase</button>
+      </div>
+    </form>
+
+        </div>
+      </div>
+    </div>
+    {% block javascript %}
+
+        <script>
+        function  get_prod(id,name,icon,description){
+            prodid=id
+            $("#id_prod").val(id)
+            $("#id_name").val(name)
+            $("#id_icon").val(icon)
+            $("#id_description").val(description)
+        }
+        function proceed_edit(){
+            $("#myForm").submit()
+        }
+    </script>
+    {% endblock %}
+    </body>
 {% endblock %}
 
 

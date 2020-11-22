@@ -395,8 +395,25 @@ def adminUsers(request):
 def adminApps(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            return render(request, 'adminapps.html',
-                          {'products': Product.objects.all().order_by('-id')})
+            data={}
+            if request.method == 'POST':
+                form=EditProductForm(request.POST)
+                if form.is_valid():
+                    idprod= form.cleaned_data['prod']
+                    product= Product.objects.filter(id=idprod)[0]
+                    product.name=form.cleaned_data['name']
+                    product.icon=form.cleaned_data['icon']
+                    product.description=form.cleaned_data['description']
+                    product.save()
+                    data['success'] = 'Success editing the product ' + product.name
+                else:
+                    #Open the modal showing the error on page load, AINDA N FUNCIONA!
+                    data['error'] =True
+            else:
+                form = EditProductForm()
+
+            data['products'],data['form'] = Product.objects.all().order_by('-id'), form
+            return render(request, 'adminapps.html', data)
         else:
             return render(request, 'notfound.html')
     else:

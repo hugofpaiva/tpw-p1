@@ -33,6 +33,7 @@ urlpatterns = [
     #account
     path('account/', views.accountDetails, name="accountDetails"),
 
+
     #admin
     path('admin/purchases/', views.adminPurchases, name="adminPurchases"),
     path('admin/users/', views.adminUsers, name="adminUsers"),
@@ -40,6 +41,6 @@ urlpatterns = [
 
     #add/edit review
 
-    path('shop/product/<int:idprod>/review' , views.review_View, name='prodreview')
+    path('shop/product/<int:idprod>/review', views.review_View, name='prodreview')
 
 ]
