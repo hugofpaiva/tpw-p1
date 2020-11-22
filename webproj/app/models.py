@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
+from django.db.models import Min, Avg
+from django.db.models.functions import Round, Ceil
 
 
 class Developer(models.Model):
@@ -21,6 +23,17 @@ class Product(models.Model):
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def price(self):
+        return Product_Pricing_Plan.objects.filter(product=self).aggregate(Min('price'))['price__min']
+
+    @property
+    def stars(self):
+        stars = Reviews.objects.filter(product=self).aggregate(rating__avg=Ceil(Avg('rating')))['rating__avg']
+        if stars is None:
+            stars = 0
+        return int(stars)
 
 class Client(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD

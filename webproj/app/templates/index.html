@@ -82,7 +82,7 @@
 							</li>
 						</ul>
 					</div>
-					<div class="product__item__text">
+					<div class="product__item__text" onclick="document.location.href='/shop/product/{{ product.id }}/'">
                         <h6>{{ product.name }}</h6>
                         <a class="add-cart">{{ product.description }}</a>
 						<div class="rating">
@@ -95,7 +95,7 @@
                                  <i class="fa fa-star-o"></i>
                             {% endfor %}
 						</div>
-						<h5>{{ product.price }} €</h5>
+						<h5>{{ product.Roundprice }} €</h5>
 					</div>
 				</div>
 			</div>

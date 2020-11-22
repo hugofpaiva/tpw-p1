@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
+
+from app.filters import ProductFilter
 from app.forms import *
 from app.models import *
 import random
@@ -17,7 +19,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-# foi a maneira mais facil q arranjei para saber qual o elemento ativo na navbar, ja que o shop vai extender o base.html(navbars e essas merdas)
 def indexView(request):
     numBanners = random.randint(2, 6)
     productsBanner = []
@@ -60,63 +61,16 @@ def indexView(request):
     products = newArrivalsDistinct + bestSellers
 
     for product in products:
-        product.price = round(
-            Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'], 2)
-        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
-        if rate:
-            product.rate = rate
-        else:
-            product.rate = 0
-        product.nStars = range(int(product.rate))
-        product.nEmptyStars = range(5 - int(product.rate))
+        product.Roundprice = round(
+            product.price, 2)
+        product.nStars = range(int(product.stars))
+        product.nEmptyStars = range(5 - int(product.stars))
 
     return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
 
 
-def shopSearchView(request, prodName, pageNumber):
-    if pageNumber < 1:
-        return render(request, 'notfound.html')
-
-    offset = (pageNumber - 1) * 12
-    products = Product.objects.filter(name__icontains=prodName)
-    productsOffset = products[offset:offset + 12]
-    totalProducts = products.count()
-    leftPages = totalProducts - pageNumber
-    totalPages = round(totalProducts / 12)
-
-    categories = Category.objects.all()
-    developers = Developer.objects.all()
-
-    if totalPages == 0:
-        totalPages = 1
-
-    if leftPages <= 2:
-        rangeLeftPages = range(leftPages)
-    else:
-        rangeLeftPages = range(2)
-
-    for category in categories:
-        category.numProd = Product.objects.filter(category__exact=category).count()
-
-    for product in productsOffset:
-        product.price = round(
-            Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'], 2)
-        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
-        if rate:
-            product.rate = rate
-        else:
-            product.rate = 0
-        product.nStars = range(int(product.rate))
-
-        product.nEmptyStars = range(5 - int(product.rate))
-    return render(request, 'shop.html',
-                  {'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
-                   'totalPages': totalPages, 'actualPage': pageNumber, 'leftPages': leftPages,
-                   'rangeLeftPages': rangeLeftPages, 'categories': categories, 'developers': developers})
-
-
 def shopView(request):
-
+    # Falta Aplicar nova paginação
     if request.GET.get('page') is None:
         pageNumber=1
     else:
@@ -126,14 +80,13 @@ def shopView(request):
         return render(request, 'notfound.html')
 
     offset = (pageNumber-1)*12
-    parameters = {field_name: value for field_name, value in request.GET.items()
-                 if value and field_name in Product._meta.get_fields}
-    print(parameters)
-    print(Product._meta.get_fields())
-    products = Product.objects.filter()
-    print(products)
+
+    products = ProductFilter(request.GET, queryset=Product.objects.all())
+
+    products = products.qs
+
     productsOffset = products[offset:offset+12]
-    totalProducts=products.count()
+    totalProducts = products.count()
 
     totalPages = math.ceil(totalProducts / 12)
 
@@ -152,19 +105,14 @@ def shopView(request):
         category.numProd = Product.objects.filter(category__exact=category).count()
 
     for product in productsOffset:
-        product.price = round(
-            Product_Pricing_Plan.objects.filter(product__exact=product).aggregate(Min('price'))['price__min'], 2)
-        rate = Reviews.objects.filter(product__exact=product).aggregate(Avg('rating'))['rating__avg']
-        if rate:
-            product.rate = rate
-        else:
-            product.rate = 0
-        product.nStars = range(int(product.rate))
-        product.nEmptyStars = range(5 - int(product.rate))
+        product.Roundprice = round(product.price, 2)
+        product.nStars = range(int(product.stars))
+        product.nEmptyStars = range(5 - int(product.stars))
+
     return render(request, 'shop.html',
                   {'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
                    'totalPages': totalPages, 'actualPage': pageNumber, 'leftPages': leftPages,
-                   'rangeLeftPages': rangeLeftPages, 'categories': categories, 'developers': developers})
+                   'rangeLeftPages': rangeLeftPages, 'categories': categories, 'developers': developers, 'getParams': request.GET})
 
 
 def register(request):

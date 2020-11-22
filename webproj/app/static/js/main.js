@@ -216,12 +216,40 @@
 })(jQuery);
 
 function insertParam(dict){
-let url = new URL(window.location.href);
+    let url= new URL(window.location);
+
 
 Object.entries(dict).forEach(([k,v]) => {
+    if(url.searchParams.has(k)&&url.searchParams.get(k)==v){
+        url.searchParams.delete(k)
+    }else{
+
+    url.searchParams.set(k, v);
+    }
+})
+
+    window.location.href = url;
+
+    return false;
+
+}
+
+function removeAndInsertParam(param, dict){
+    let url = new URL(window.location);
+
+
+
+
+    url.searchParams.delete(param);
+
+    Object.entries(dict).forEach(([k,v]) => {
     url.searchParams.set(k, v);
 })
 
-window.location.href = url;
+    window.location.href = url;
+
+
+
+    return false;
 
 }

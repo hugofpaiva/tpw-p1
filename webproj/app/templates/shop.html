@@ -13,12 +13,13 @@
 				<div class="col-lg-3">
 					<div class="shop__sidebar">
 						<div class="shop__sidebar__search">
-							<form action="#">
-								<input type="text" placeholder="Search..." />
+                            <form onsubmit="(e) => e.preventDefault();return insertParam({'name':document.getElementById('search').value})">
+								<input type="text" id="search" placeholder="Search..." {% if getParams.name %} value="{{ getParams.name }}" {% endif %} />
 								<button type="submit">
 									<span class="icon_search"></span>
 								</button>
-							</form>
+                             </form>
+
 						</div>
 						<div class="shop__sidebar__accordion">
 							<div class="accordion" id="accordionExample">
@@ -42,7 +43,7 @@
 												<ul class="nice-scroll">
                                                     {% for category in categories %}
 													<li>
-														<a href="javascript:insertParam({'category':{{ category.id }}})">{{ category.title }} ({{ category.numProd }})</a>
+														<a {% if getParams.category == category.id|stringformat:'s' %} style="color: #111111;" {% endif %} href="javascript:insertParam({'category':{{ category.id }}})">{{ category.title }} ({{ category.numProd }})</a>
 													</li>
                                                     {% endfor %}
 
@@ -69,7 +70,7 @@
 												<ul>
 													{% for dev in developers %}
 													<li>
-														<a href="javascript:insertParam({'dev':{{ dev.id }}})">{{ dev.name }}</a>
+														<a {% if getParams.developer == dev.id|stringformat:'s' %} style="color: #111111;" {% endif %}  href="javascript:insertParam({'developer':{{ dev.id }}})" >{{ dev.name }}</a>
 													</li>
                                                     {% endfor %}
 												</ul>
@@ -94,35 +95,35 @@
 											<div class="shop__sidebar__price">
 												<ul>
 													<li>
-														<a href="javascript:insertParam({'price':0})"
+														<a {% if getParams.max_price == 10|stringformat:'s' and not getParams.min_price %} style="color: #111111;" {% endif %} href="javascript:removeAndInsertParam('min_price',{'max_price':10})"
 															>0€ - 10€</a
 														>
 													</li>
 													<li>
-														<a href="javascript:insertParam({'price':1})"
+														<a {% if getParams.min_price == 10|stringformat:'s' and getParams.max_price == 25|stringformat:'s' %} style="color: #111111;" {% endif %}  href="javascript:insertParam({'min_price':10,'max_price':25})"
 															>10€ - 25€</a
 														>
 													</li>
 													<li>
-														<a href="javascript:insertParam({'price':2})"
+														<a {% if getParams.min_price == 25|stringformat:'s' and getParams.max_price == 50|stringformat:'s' %} style="color: #111111;" {% endif %}  href="javascript:insertParam({'min_price':25,'max_price':50})"
 															>25€ -
 															50€</a
 														>
 													</li>
 													<li>
-														<a href="javascript:insertParam({'price':3})"
+														<a {% if getParams.min_price == 50|stringformat:'s' and getParams.max_price == 100|stringformat:'s' %} style="color: #111111;" {% endif %}  href="javascript:insertParam({'min_price':50,'max_price':100})"
 															>50€ -
 															100€</a
 														>
 													</li>
 													<li>
-														<a href="javascript:insertParam({'price':4})"
+														<a {% if getParams.min_price == 100|stringformat:'s' and getParams.max_price == 200|stringformat:'s' %} style="color: #111111;" {% endif %} href="javascript:insertParam({'min_price':100,'max_price':200})"
 															>100€ -
 															200€</a
 														>
 													</li>
 													<li>
-														<a href="javascript:insertParam({'price':5})">250€ +</a>
+														<a {% if getParams.min_price == 250|stringformat:'s' and not getParams.max_price %} style="color: #111111;" {% endif %} href="javascript:removeAndInsertParam('max_price', {'min_price':250})">250€ +</a>
 													</li>
 												</ul>
 											</div>
@@ -144,35 +145,35 @@
 									>
 										<div class="card-body">
 											<div class="shop__sidebar__size">
-												<label for="xs"
+												<label {% if getParams.stars == 1|stringformat:'s' %} class="active" {% endif %} for="xs"
 													onclick="insertParam({'stars':1})">⭐️
 													<input
 														type="radio"
 														id="1*"
                                                     />
 												</label>
-												<label for="sm"
+												<label {% if getParams.stars == 2|stringformat:'s' %} class="active" {% endif %} for="sm"
 													onclick="insertParam({'stars':2})">⭐️⭐️
 													<input
 														type="radio"
 														id="2*"
 													/>
 												</label>
-												<label for="md"
+												<label {% if getParams.stars == 3|stringformat:'s' %} class="active" {% endif %} for="md"
 													onclick="insertParam({'stars':3})">⭐️⭐️⭐️
 													<input
 														type="radio"
 														id="3*"
 													/>
 												</label>
-												<label for="xl"
+												<label {% if getParams.stars == 4|stringformat:'s' %} class="active" {% endif %} for="xl"
 													onclick="insertParam({'stars':4})">⭐️⭐️⭐️⭐️
 													<input
 														type="radio"
 														id="4*"
 													/>
 												</label>
-												<label for="2xl"
+												<label {% if getParams.stars == 5|stringformat:'s' %} class="active" {% endif %} for="2xl"
 													onclick="insertParam({'stars':5})">⭐️⭐️⭐️⭐️⭐️
 													<input
 														type="radio"
@@ -200,10 +201,18 @@
 								<div class="shop__product__option__right">
 									<p>Sort by:</p>
 									<select>
-										<option onclick="insertParam({'sort':0})" value="">Price Low To High</option>
-										<option onclick="insertParam({'sort':1})" value="">Price High to Low</option>
-										<option onclick="insertParam({'sort':2})" value="">Rating Low To High</option>
-										<option onclick="insertParam({'sort':3})" value="">Rating High to Low</option>
+
+                                            <option {% if getParams.order == "price" %} selected {% endif %} value="0">Price Low To High</option>
+
+
+                                            <option {% if getParams.order == "-price" %} selected {% endif %} value="1">Price High to Low</option>
+
+
+                                            <option {% if getParams.order == "stars" %} selected {% endif %} value="2">Rating Low To High</option>
+
+
+                                            <option {% if getParams.order == "-stars" %} selected {% endif %} value="3">Rating High to Low</option>
+
 									</select>
 								</div>
 							</div>
@@ -213,7 +222,7 @@
 
                         {% for product in products %}
 						<div class="col-lg-4 col-md-6 col-sm-6 product" >
-								{% if product.rate > 0 %}
+								{% if product.stars > 0 %}
 									<div class="product__item sale">
 									{% else %}
 									<div class="product__item">
@@ -252,7 +261,7 @@
 
 
 										</div>
-										<h5>{{ product.price }} €</h5>
+										<h5>{{ product.Roundprice }} €</h5>
 									</div>
 
 								</div>
@@ -282,7 +291,7 @@
                 {% else %}
                 <div class="col-lg-9">
                 <div class="product__details__text">
-                    <h3>There are no products.</h3>
+                    <h3>There are no products</h3>
                 </div>
                 </div>
              {% endif %}
