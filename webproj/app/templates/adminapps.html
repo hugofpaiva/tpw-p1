@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load  static %}
+{% block content %}
+    <head>
+    <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
+    </head>
+
+    <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
+
+    <h4 class="font-weight-bold py-3 mb-4">
+      Admin settings
+    </h4>
+
+
+    <div class="card overflow-hidden">
+      <div class="row no-gutters row-bordered row-border-light">
+        <div class="col-md-2 pt-0">
+          <div class="list-group list-group-flush account-settings-links">
+            <a class="list-group-item list-group-item-action" href="/admin/purchases/">Purchases</a>
+              <a class="list-group-item list-group-item-action" href="/admin/users/">Users</a>
+              <a class="list-group-item list-group-item-action active" href="/admin/apps/">Applications</a>
+            <a class="list-group-item list-group-item-action"  href="/account/">Account</a>
+          </div>
+        </div>
+        <div class="col-md-10">
+          <div class="tab-content">
+             <div class="tab-pane" id="admin-purchases" style="display: block">
+                 <div class="card-body pb-2">
+                   <table class="table" width="100%" align="center">
+                     <thead  style="background-color: black; border: 0; color: white;">
+                       <tr>
+                         <th scope="col">Icon</th>
+                         <th scope="col">Name</th>
+                         <th scope="col">Category</th><th scope="col" >Edit</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {% for p in products %}
+                           <tr>
+                             <td scope="row"><div class="product__item__pic set-bg" style="width:50px; height:50px;" data-setbg="{{ p.icon }}"></div></td>
+                             <td>{{ p.name }}</td>
+                             <td>
+                                 {% for c in p.category.all %}
+                                     {{ c  }}
+                                 {% endfor %}
+
+                             </td>
+                             <td align="center"><a href="/shop/product/{{ p.id }}/"><button style="width: 50%;" class="site-btn">Edit</button></a></td>
+                           </tr>
+                       {% endfor %}
+                     </tbody>
+                   </table>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+     <br>
+     <br>
+     <br>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
