@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load  static %}
+{% block content %}
+    <head>
+    <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
+    </head>
+
+    <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
+
+    <h4 class="font-weight-bold py-3 mb-4">
+      Admin settings
+    </h4>
+
+
+    <div class="card overflow-hidden">
+      <div class="row no-gutters row-bordered row-border-light">
+        <div class="col-md-2 pt-0">
+          <div class="list-group list-group-flush account-settings-links">
+            <a class="list-group-item list-group-item-action" href="/admin/purchases/">Purchases</a>
+              <a class="list-group-item list-group-item-action active" href="/admin/users/">Users</a>
+              <a class="list-group-item list-group-item-action" href="/admin/apps/">Applications</a>
+            <a class="list-group-item list-group-item-action"  href="/account/">Account</a>
+          </div>
+        </div>
+        <div class="col-md-10">
+          <div class="tab-content">
+             <div class="tab-pane" id="admin-purchases" style="display: block">
+                 <div class="card-body pb-2">
+                   <table class="table" width="100%" align="center">
+                     <thead  style="background-color: black; border: 0; color: white;">
+                       <tr>
+                         <th scope="col" style="width: 20%">Name</th>
+                         <th scope="col" style="width: 30%">Email</th>
+                         <th scope="col" style="width: 30%">Joined at</th>
+                         <th scope="col" style="width: 10%">Balance</th>
+                         <th scope="col" style="width: 10%">Add Balance</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {% for client in users %}
+                           <tr>
+                             <td>{{ client.user.first_name }} {{ client.user.last_name }}</td>
+                             <td>{{ client.user.email }}</td>
+                             <td>
+                                 {{ client.created_at }}
+
+                             </td>
+                             <td>
+                                 {{ client.balance }}€</td>
+                           </tr>
+                       {% endfor %}
+                     </tbody>
+                   </table>
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+     <br>
+     <br>
+     <br>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+

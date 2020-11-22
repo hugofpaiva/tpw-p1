@@ -305,46 +305,87 @@ def fill_form(client):
 
 # ver isto melhor ta cancro como a merda
 def accountDetails(request):
-    user = User.objects.get(username=request.user.username)
-    client = Client.objects.get(user_id=user.id)
-
-    # favourites
-    fav = client.favorites.all()
-
-    if request.method == "POST":
-        form = UpdateClientForm(request.POST, instance=request.user)
-        form_pw = UpdatePasswordForm(request.user, request.POST)
-        if 'old_password' not in request.POST:
-            if form.is_valid():
-                update = form.save()
-                update.client = request.user
-                client = Client.objects.get(user_id=update.client.id)
-                update.save()
-                update.refresh_from_db()
-                #to stay logged in
-
-                #Because after changes in account, the system logout the user
-                login(request, update.client)
-                form=fill_form(client)
-                return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            is_superuser = True
         else:
-            if form_pw.is_valid():
-                user = form_pw.save()
-                update_session_auth_hash(request, form_pw.user)
-                user.client = request.user
-                client = Client.objects.get(user_id=user.client.id)
-                user.save()
-                user.refresh_from_db()
-                #to stay logged in
+            is_superuser = False
 
-                #Because after changes in account, the system logout the user
-                login(request, user.client)
-                form = fill_form(client)
-                return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form, 'favourites': fav})
+        user = User.objects.get(username=request.user.username)
+        client = Client.objects.get(user_id=user.id)
+
+        # favourites
+        fav = client.favorites.all()
+
+        if request.method == "POST":
+            form = UpdateClientForm(request.POST, instance=request.user)
+            form_pw = UpdatePasswordForm(request.user, request.POST)
+            if 'old_password' not in request.POST:
+                if form.is_valid():
+                    update = form.save()
+                    update.client = request.user
+                    client = Client.objects.get(user_id=update.client.id)
+                    update.save()
+                    update.refresh_from_db()
+                    #to stay logged in
+
+                    #Because after changes in account, the system logout the user
+                    login(request, update.client)
+                    form=fill_form(client)
+                    return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
+            else:
+                if form_pw.is_valid():
+                    user = form_pw.save()
+                    update_session_auth_hash(request, form_pw.user)
+                    user.client = request.user
+                    client = Client.objects.get(user_id=user.client.id)
+                    user.save()
+                    user.refresh_from_db()
+                    #to stay logged in
+
+                    #Because after changes in account, the system logout the user
+                    login(request, user.client)
+                    form = fill_form(client)
+                    return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form, 'favourites': fav, 'is_superuser':is_superuser})
+        else:
+            form = fill_form(client)
+            form_pw = UpdatePasswordForm(request.user)
+
+        return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
     else:
-        form = fill_form(client)
-        form_pw = UpdatePasswordForm(request.user)
+        return redirect('/login')
 
-    return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav})
+
+
+def adminPurchases(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return render(request, 'adminpurchases.html',
+                          {'purchases': Purchase.objects.all().order_by('-id')})
+        else:
+            return render(request, 'notfound.html')
+    else:
+        return redirect('/login')
+
+def adminUsers(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return render(request, 'adminusers.html',
+                          {'users': Client.objects.all().order_by('-id')})
+        else:
+            return render(request, 'notfound.html')
+    else:
+        return redirect('/login')
+
+def adminApps(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return render(request, 'adminapps.html',
+                          {'products': Product.objects.all().order_by('-id')})
+        else:
+            return render(request, 'notfound.html')
+    else:
+        return redirect('/login')
+
 
 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 from django.db.models import Min, Avg
-from django.db.models.functions import Round, Ceil
+from django.db.models.functions import Ceil
 
 
 class Developer(models.Model):
@@ -41,7 +41,7 @@ class Product(models.Model):
         return int(stars)
 
 class Client(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')#Isto e a FK para a classe User zé. N Mexas xD
+    user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='client')
     favorites=models.ManyToManyField(Product, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
@@ -51,10 +51,10 @@ class Client(models.Model):
 
 
 class Purchase(models.Model):
-    client=models.ForeignKey(Client,on_delete=models.CASCADE)
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    client = models.ForeignKey(Client,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    available_until= models.DateField(null=True, blank=True)
+    available_until = models.DateField(null=True, blank=True)
     def set_paid_until(self,date):
         self.available_until=date
         self.save()
@@ -82,7 +82,7 @@ class Reviews(models.Model):
     body=models.CharField(max_length=50)
 
 class Product_Pricing_Plan(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    product=models.ForeignKey(Product,on_delete=models.CASCADE, related_name='pricing_plan')
     plans = (
         ('FREE', 'Free Plan'),
         ('MONTHLY', 'Monthly Basic'),

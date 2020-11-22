@@ -20,7 +20,7 @@ from app import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/django/', admin.site.urls),
     path('', views.indexView, name='index'),
     path('signup/',views.register,name='signup'),
     path('shop/product/<int:idprod>/', views.prodDetails, name='productdetails'),
@@ -32,6 +32,11 @@ urlpatterns = [
 
     #account
     path('account/', views.accountDetails, name="accountDetails"),
+
+    #admin
+    path('admin/purchases/', views.adminPurchases, name="adminPurchases"),
+    path('admin/users/', views.adminUsers, name="adminUsers"),
+    path('admin/apps/', views.adminApps, name="adminApps"),
 
     #add/edit review
 
