@@ -3,6 +3,16 @@
 {% load  static %}
 {% block content %}
 <body>
+    {% if  errors is not None %}
+       <div class="alert alert-danger" role="alert">
+            {{ errors }}
+        </div>
+    {% endif %}
+    {% if  successes is not None %}
+       <div class="alert alert-success" role="alert">
+            {{ successes }}
+        </div>
+    {% endif %}
 
     <!-- Shop Details Section Begin -->
     <section class="shop-details">
@@ -44,7 +54,16 @@
                                 </ul>
                             </div>
                              <div class="product__details__btns__option">
-                                <a href="#"><i class="fa fa-heart"></i> add to Favorites</a>
+                                 <form id="favoritesForm" name="myFormName" method="post" action=".">
+                                  <div class="modal-body">
+                                        {% csrf_token %}
+                                        {% for field in  form_fav %}
+                                            <p>
+                                        {{ field.as_hidden}}
+                                        {% endfor %}
+                                  </div>
+                                <a onclick="add_remove_favorites()" type="button"><i class="fa fa-heart"></i> {% if is_fav %} add to Favorites {% else %}Remove from Favorites {% endif %}</a>
+                                  </form>
                             </div>
                             </div>
                             </div>
@@ -214,7 +233,7 @@
       <div class="modal-body">
         Are you Sure you want to buy this product?
             {% csrf_token %}
-            {% for field in myform %}
+            {% for field in form_purch %}
                 <p>
             {{ field.as_hidden}}
             {% endfor %}
@@ -237,11 +256,16 @@
         type_payment=id
         console.log(type_payment)
     }
-     function  proceed_checkout( ) {
-        $("#id_productid").val({{ prod.id }})
-        console.log("alalal" + type_payment)
-        $("#id_paymenttype").val(type_payment)
-         $("#myForm").submit();
+    function  add_remove_favorites(){
+        $("#id_favorites").val(true)
+        $("#favoritesForm").submit()
+    }
+
+    function  proceed_checkout( ) {
+    $("#id_productid").val({{ prod.id }})
+    console.log("alalal" + type_payment)
+    $("#id_paymenttype").val(type_payment)
+     $("#myForm").submit();
     }
 </script>
 {% endblock javascript %}

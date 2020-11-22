@@ -37,6 +37,12 @@ class UpdatePasswordForm(PasswordChangeForm):
 
 
 
-class proceedtoCheckoutForm(forms.Form):
+class PurchaseForm(forms.Form):
+    '''
+    The first two fields of this form correspond to the form that will be used to complete a purchase( if there are no errors in the process of completion)
+    The last one will only be used to when we want to add to favorites ( or remove it from favorites ) a product
+    '''
     productid=forms.IntegerField()
     paymenttype=forms.IntegerField()
+class FavoritesForm(forms.Form):
+    productid =forms.BooleanField(required=False,initial=False);
