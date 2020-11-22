@@ -54,5 +54,6 @@ class ReviewForm(forms.Form):
     rating = forms.IntegerField(
         validators=[
             MaxValueValidator(5),
-            MinValueValidator(0) ])
-    text = forms.CharField(max_length=50)
+            MinValueValidator(0) ],
+            help_text='Rate this app in a scale of 1 to 5',widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    text = forms.CharField(max_length=50,help_text='Describe your experience!',widget=forms.TextInput(attrs={'class': 'form-control input-sm'}))
