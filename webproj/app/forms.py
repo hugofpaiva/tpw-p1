@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class SignUpForm(UserCreationForm):
@@ -39,10 +40,19 @@ class UpdatePasswordForm(PasswordChangeForm):
 
 class PurchaseForm(forms.Form):
     '''
-    The first two fields of this form correspond to the form that will be used to complete a purchase( if there are no errors in the process of completion)
-    The last one will only be used to when we want to add to favorites ( or remove it from favorites ) a product
+    These two fields of this form correspond to the form that will be used to complete a purchase( if there are no errors in the process of completion)
     '''
     productid=forms.IntegerField()
     paymenttype=forms.IntegerField()
+
 class FavoritesForm(forms.Form):
     productid =forms.BooleanField(required=False,initial=False);
+
+
+
+class ReviewForm(forms.Form):
+    rating = forms.IntegerField(
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(0) ])
+    text = forms.CharField(max_length=50)

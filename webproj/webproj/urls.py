@@ -33,4 +33,8 @@ urlpatterns = [
     #account
     path('account/', views.accountDetails, name="accountDetails"),
 
+    #add/edit review
+
+    path('shop/product/<int:idprod>/review' , views.review_View, name='prodreview')
+
 ]
