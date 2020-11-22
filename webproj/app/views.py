@@ -226,6 +226,7 @@ def prodDetails(request, idprod):
     else:
         form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
         reviews = Reviews.objects.filter(product=product).order_by('-date')
+        print(reviews)
         numreviews = reviews.count()
         # --- Django Pagination ---
         paginator = Paginator(reviews, 5)  # shows 1 review per page
@@ -236,13 +237,12 @@ def prodDetails(request, idprod):
         is_fav=False
         if product in client.favorites.all(): is_fav=True
         has_reviewed = False
-        for review in reviews:
+        for review in page_obj.object_list:
             review.nStars = range(int(review.rating))
             review.nEmptyStars = range(5 - int(review.rating))
-            print(review.nStars, review.nEmptyStars)
-            print(review.author )
-            print(client)
-            if review.author == client.id:
+
+            if review.author.id == client.id:
+                print("zeg")
                 has_reviewed = True
 
         rate = reviews.aggregate(Avg('rating'))['rating__avg']
@@ -272,10 +272,25 @@ def prodDetails(request, idprod):
 #view for adding or editing a custom review
 def review_View(request,idprod):
     client = Client.objects.filter(user_id=request.user.id)[0]
+    review = Reviews.objects.filter(author__id=client.id, product_id=idprod)
     if request.method == 'POST':
-        return HttpResponse("Upsi")
+        form  = ReviewForm(request.POST)
+        if form.is_valid():
+            if review.exists():
+                rev=review[0]
+                rev.date=datetime.date.today()
+                rev.rating = form.cleaned_data['rating']
+                rev.body = form.cleaned_data['text']
+                rev.save()
+                request.session.__setitem__("last_request_success", "Your review was successfully updated!")
+            else:
+                review = Reviews(author=client,product_id=idprod)
+                review.rating=form.cleaned_data['rating']
+                review.body = form.cleaned_data['text']
+                review.save()
+                request.session.__setitem__("last_request_success", "Your review was successfully added!")
+            return redirect('productdetails',idprod=idprod)
     else:
-        review = Reviews.objects.filter(author__id=client.id, product_id=idprod)
         form = None
         if review.exists():
             form=fill_review_form(review[0])
