@@ -46,7 +46,7 @@ class Client(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
     def __str__(self):
-        return str(self.user.username) + ", " + str( self.user.email)
+        return str(self.user.username)
 
 
 
@@ -70,7 +70,7 @@ class Prod_Benefits(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
 
 class Reviews(models.Model):
-    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    author=models.ForeignKey(Client,on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     rating=models.IntegerField(
         validators=[
@@ -78,9 +78,8 @@ class Reviews(models.Model):
             MinValueValidator(0)
         ]
     )
-    date=models.DateField()
+    date=models.DateField(auto_now_add=True)
     body=models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)
 
 class Product_Pricing_Plan(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE)

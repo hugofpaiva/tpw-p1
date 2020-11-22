@@ -106,18 +106,20 @@
                         <div class="product__details__tab">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#tabs-5"
+                                    <a {% if revs.number == 1 %} class="nav-link active" {% else %} class="nav-link" {% endif %} data-toggle="tab" href="#tabs-5"
                                     role="tab">Description</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">Review{{ revs | pluralize }}( {{ numreviews }} )</a>
+                                <li   class="nav-item">
+                                    <a {% if revs.number > 1 %} class="nav-link active" {% else %} class="nav-link" {% endif %} data-toggle="tab" href="#tabs-6"
+                                    role="tab">Review{{ revs | pluralize }}( {{ numreviews }} )</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Product Benefits</a>
                                 </li>
                             </ul>
                             <div class="tab-content">
-                                <div class="tab-pane active" id="tabs-5" role="tabpanel">
+
+                                <div  {% if revs.number == 1 %} class="tab-pane active" {% else %} class="tab-pane" {% endif %}id="tabs-5" role="tabpanel">
                                     <div class="product__details__tab__content">
                                         <div class="container">
                                         <p class="note">Product Information</p>
@@ -127,14 +129,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="tabs-6" role="tabpanel">
+                                <div {% if revs.number > 1 %} class="tab-pane active" {% else %} class="tab-pane" {% endif %} class="tab-pane" id="tabs-6" role="tabpanel">
                                     <div class="product__details__tab__content">
+
+
                                         {% if revs %}
                                         <h4 class="text-center">Check the Latest Reviews on this app!</h4>
                                         {% for rev in revs %}
                                             <div class="product__details__tab__content__item">
                                             <div class="container">
-
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <div class="row">
@@ -165,10 +168,15 @@
                                             </div>
                                             </div>
                                         {% endfor %}
-                                        {% else %}
-                                        <h4 class="text-center">There are no Reviews for this Product!</h4>
-                                        {% endif %}
-                                        <div class="pagination container">
+                                             <div class=" container text-right mt-3" style=" padding-bottom: 20px">
+                                                {% if has_rev %}
+                                                <a href="{% url 'prodreview' idprod=prod.id %}" type="button" class="site-btn">Edit Review</a>
+                                                {% else %}
+                                                <a href="{% url 'prodreview' idprod=prod.id %}" type="button" class="site-btn">Add Review</a>
+                                                {% endif %}
+                                            </div>
+
+                                               <div class="pagination container">
                                             <span class="step-links" style="padding-left: 41%">
                                                 <span class="current" >
                                                     <h5 class="text-center">Page {{ revs.number }} of {{ revs.paginator.num_pages }} Reviews </h5>
@@ -184,6 +192,18 @@
                                                 {% endif %}
                                             </span>
                                         </div>
+                                        {% else %}
+                                        <h4 class="text-center">There are no Reviews for this Product! Be the first to Review it! </h4>
+                                         <div class=" container text-center mt-3" style=" padding-bottom: 20px">
+                                            {% if has_rev %}
+                                            <a href="{% url 'prodreview' idprod=prod.id %}" type="button"    class="site-btn">Edit Review</a>
+                                            {% else %}
+                                            <a href="{% url 'prodreview' idprod=prod.id  %}" type="button" class="site-btn">Add Review</a>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+
+
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="tabs-7" role="tabpanel">

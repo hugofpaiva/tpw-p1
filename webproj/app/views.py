@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound, HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.core.paginator import Paginator
@@ -224,21 +225,26 @@ def prodDetails(request, idprod):
         return response
     else:
         form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
-        reviews = Reviews.objects.filter(product=product)
+        reviews = Reviews.objects.filter(product=product).order_by('-date')
         numreviews = reviews.count()
         # --- Django Pagination ---
-        paginator = Paginator(reviews, 1)  # shows 1 review per page
+        paginator = Paginator(reviews, 5)  # shows 1 review per page
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         # ------------------------
         # check if product is already, or not, added to the client's favorites
         is_fav=False
         if product in client.favorites.all(): is_fav=True
-
+        has_reviewed = False
         for review in reviews:
             review.nStars = range(int(review.rating))
             review.nEmptyStars = range(5 - int(review.rating))
             print(review.nStars, review.nEmptyStars)
+            print(review.author )
+            print(client)
+            if review.author == client.id:
+                has_reviewed = True
+
         rate = reviews.aggregate(Avg('rating'))['rating__avg']
         if rate:
             product.rate = rate
@@ -250,7 +256,10 @@ def prodDetails(request, idprod):
         categories = product.category.all()
         totalpurchases = Purchase.objects.filter(product__exact=product).count()
         data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
-               'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases, ' form_fav':form_favorites, 'is_fav': is_fav }
+               'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases,
+               ' form_fav':form_favorites, 'is_fav': is_fav, 'has_rev': has_reviewed }
+        #render in template errors in forms
+
         if  request.session.get("last_request_error") is not None:
             print("cucu")
             data["errors"]  = request.session.get("last_request_error")
@@ -260,7 +269,30 @@ def prodDetails(request, idprod):
             del request.session["last_request_success"]
         return render(request, 'productdetails.html', data)
 
+#view for adding or editing a custom review
+def review_View(request,idprod):
+    client = Client.objects.filter(user_id=request.user.id)[0]
+    if request.method == 'POST':
+        return HttpResponse("Upsi")
+    else:
+        review = Reviews.objects.filter(author__id=client.id, product_id=idprod)
+        form = None
+        if review.exists():
+            form=fill_review_form(review[0])
+        else:
+            form = ReviewForm()
+    return render(request,'reviewsubmission.html', {'form': form})
 
+
+#in case the we a client is editing a review that he made
+def fill_review_form(rev):
+    form = ReviewForm()
+    form.fields['rating'].initial = rev.rating
+    form.fields['text'].initial = rev.body
+    return form
+
+
+#fill initial field for the client form
 def fill_form(client):
     form = UpdateClientForm()
     form.fields['username'].initial = client.user.username
