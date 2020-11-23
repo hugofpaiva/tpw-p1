@@ -74,13 +74,6 @@
                         {% if product.new %}
 						    <span class="label">New</span>
                         {% endif %}
-						<ul class="product__hover">
-							<li>
-								<a href="#"
-									><img src="{% static "img/icon/heart.png" %}" alt=""
-								/></a>
-							</li>
-						</ul>
 					</div>
 					<div class="product__item__text" onclick="document.location.href='/shop/product/{{ product.id }}/'">
                         <h6>{{ product.name }}</h6>

@@ -39,6 +39,9 @@ urlpatterns = [
     path('admin/users/', views.adminUsers, name="adminUsers"),
     path('admin/apps/', views.adminApps, name="adminApps"),
 
+    #notfound
+    path('404/', views.notfound, name="notfound"),
+
     #add/edit review
 
     path('shop/product/<int:idprod>/review', views.review_View, name='prodreview')

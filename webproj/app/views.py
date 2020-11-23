@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotFound, HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
@@ -70,8 +69,8 @@ def indexView(request):
     for product in products:
         product.Roundprice = round(
             product.price, 2)
-        product.nStars = range(int(product.stars))
-        product.nEmptyStars = range(5 - int(product.stars))
+        product.nStars = range(product.stars)
+        product.nEmptyStars = range(5 - product.stars)
 
     return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
 
@@ -84,7 +83,7 @@ def shopView(request):
         pageNumber = int(request.GET.get('page'))
 
     if pageNumber<1:
-        return render(request, 'notfound.html')
+        return redirect('notfound')
 
     offset = (pageNumber-1)*12
 
@@ -206,7 +205,6 @@ class Products_Forms_Processing:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     def favorites_form_process(self, form,request):
-        print("ola")
         client_favorites=self.client.favorites.all()
         if self.product not in client_favorites:
             self.client.favorites.add(self.product)
@@ -271,7 +269,6 @@ def prodDetails(request, idprod):
         #render in template errors in forms
 
         if  request.session.get("last_request_error") is not None:
-            print("cucu")
             data["errors"]  = request.session.get("last_request_error")
             del request.session["last_request_error"]
         if   request.session.get("last_request_success") is not None:
@@ -357,7 +354,7 @@ def accountDetails(request):
                     #Because after changes in account, the system logout the user
                     login(request, update.client)
                     form=fill_form(client)
-                    return render(request,'clientdetails.html',{'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
+                    return render(request,'clientdetails.html',{'userClient': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
             else:
                 if form_pw.is_valid():
                     user = form_pw.save()
@@ -371,12 +368,12 @@ def accountDetails(request):
                     #Because after changes in account, the system logout the user
                     login(request, user.client)
                     form = fill_form(client)
-                    return render(request,'clientdetails.html',{'user': client, 'form_pw': form_pw, 'form': form, 'favourites': fav, 'is_superuser':is_superuser})
+                    return render(request,'clientdetails.html',{'userClient': client, 'form_pw': form_pw, 'form': form, 'favourites': fav, 'is_superuser':is_superuser})
         else:
             form = fill_form(client)
             form_pw = UpdatePasswordForm(request.user)
             client_purch=Purchase.objects.filter(client_id=client.id)
-        return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch})
+        return render(request, 'clientdetails.html', {'userClient': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch})
     else:
         return redirect('/login')
 
@@ -390,7 +387,7 @@ def adminPurchases(request):
             return render(request, 'adminpurchases.html',
                           {'purchases': Purchase.objects.all().order_by('-id')})
         else:
-            return render(request, 'notfound.html')
+            return redirect('notfound')
     else:
         return redirect('/login')
 
@@ -418,7 +415,7 @@ def adminUsers(request):
             return render(request, 'adminusers.html', data)
 
         else:
-            return render(request, 'notfound.html')
+            return redirect('notfound')
     else:
         return redirect('/login')
 
@@ -445,9 +442,12 @@ def adminApps(request):
             data['products'],data['form'] = Product.objects.all().order_by('-id'), form
             return render(request, 'adminapps.html', data)
         else:
-            return render(request, 'notfound.html')
+            return redirect('notfound')
     else:
         return redirect('/login')
+
+def notfound(request):
+    return render(request, 'notfound.html')
 
 
 
