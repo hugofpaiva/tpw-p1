@@ -39,8 +39,12 @@ urlpatterns = [
     path('admin/users/', views.adminUsers, name="adminUsers"),
     path('admin/apps/', views.adminApps, name="adminApps"),
 
-    #notfound
-    path('404/', views.notfound, name="notfound"),
+
+    path('404/', views.handler404, name="notfound"),
+
+    path('about/', views.aboutus, name="aboutus"),
+
+
 
     #add/edit review
 
