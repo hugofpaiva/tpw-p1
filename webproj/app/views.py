@@ -5,6 +5,8 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
 
+from django.utils import timezone
+
 from app.filters import ProductFilter
 from app.forms import *
 from app.models import *
@@ -185,10 +187,13 @@ class Products_Forms_Processing:
             p=Purchase(client=self.client,product_plan_id=paymenttype)
             if valuetopay.plan_type != 'FREE':
                 if valuetopay.plan_type == 'MONTHLY':
+                    print("crl")
                     print(datetime.date.today())
-                    p.set_paid_until(datetime_offset_by_months(datetime.date.today()))
+                    print(datetime_offset_by_months(datetime.datetime.now()))
+                    p.set_paid_until(datetime_offset_by_months(datetime.datetime.now()))
+                    print(p.available_until)
                 elif valuetopay.plan_type == 'ANNUAL':
-                    oneyear = datetime.date.today()
+                    oneyear = datetime.datetime.now()
                     for i in range(1, 13):
                         oneyear = datetime_offset_by_months(oneyear)
                     print("pew",p)

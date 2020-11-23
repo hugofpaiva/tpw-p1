@@ -65,13 +65,13 @@ class Product_Pricing_Plan(models.Model):
 class Purchase(models.Model):
     client = models.ForeignKey(Client,on_delete=models.CASCADE)
     #TIRAR DEFAULT DPS APENAS PQ DEU MERDA COM AS EXISTING ROWS
-    product_plan = models.ForeignKey(Product_Pricing_Plan,on_delete=models.CASCADE,default=None,blank=True)
+    product_plan = models.ForeignKey(Product_Pricing_Plan,on_delete=models.CASCADE,default=None)
     created_at = models.DateTimeField(auto_now_add=True)
-    available_until = models.DateField(null=True, blank=True)
+    available_until = models.DateTimeField(null=True, blank=True,default=None)
     def set_paid_until(self,date):
         self.available_until=date
         self.save()
-    def has_paid_until(self,current_date=datetime.date.today()):
+    def has_paid_until(self,current_date=datetime.datetime.now()):
         # if this parameter is None, then pricing plan is free... for now
         if self.available_until is None :
             return  True
