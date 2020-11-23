@@ -436,7 +436,7 @@ def adminApps(request):
                     data['success'] = 'Success editing the product ' + product.name
                 else:
                     #Open the modal showing the error on page load, AINDA N FUNCIONA!
-                    data['error'] =True
+                    data['error'] = True
             else:
                 form = EditProductForm()
 
