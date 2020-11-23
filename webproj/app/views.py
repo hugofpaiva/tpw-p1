@@ -385,8 +385,26 @@ def adminPurchases(request):
 def adminUsers(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            return render(request, 'adminusers.html',
-                          {'users': Client.objects.all().order_by('-id')})
+            data = {}
+            if request.method == 'POST':
+                form = AddBalanceForm(request.POST)
+                if form.is_valid():
+                    username = form.cleaned_data['user']
+                    user = User.objects.get(username=username)
+                    client = Client.objects.get(user_id=user.id)
+                    cur_balance = client.balance
+                    client.balance = cur_balance +  form.cleaned_data['balance']
+                    client.save()
+                    data['success'] = 'Success editing the product ' + user.username
+                else:
+                    # Open the modal showing the error on page load, AINDA N FUNCIONA!
+                    data['error'] = True
+            else:
+                form = AddBalanceForm()
+
+            data['users'], data['form'] = Client.objects.all().order_by('-id'), form
+            return render(request, 'adminusers.html', data)
+
         else:
             return render(request, 'notfound.html')
     else:

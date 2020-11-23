@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.core.validators import MaxValueValidator, MinValueValidator
 from app.models import  *
+from decimal import Decimal
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -70,4 +71,8 @@ class EditProductForm(forms.Form):
     # nao sei porque esta a dar redirect no form
     #category = forms.ModelChoiceField(queryset=Category.objects.all())
     #developer = forms.ModelChoiceField(queryset=Developer.objects.all())
+
+class AddBalanceForm(forms.Form):
+    user = forms.CharField()
+    balance = forms.DecimalField(max_value=200)
 
