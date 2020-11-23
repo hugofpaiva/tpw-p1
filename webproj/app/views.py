@@ -452,6 +452,9 @@ def handler404(request):
     response.status_code = 404
     return response
 
+def aboutus(request):
+    return render(request,"about.html")
+
 
 
 

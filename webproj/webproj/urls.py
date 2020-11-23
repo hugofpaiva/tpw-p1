@@ -42,7 +42,7 @@ urlpatterns = [
 
     path('404/', views.handler404, name="notfound"),
 
-    path('about/', views.handler404, name="aboutus"),
+    path('about/', views.aboutus, name="aboutus"),
 
 
 
