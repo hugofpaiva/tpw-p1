@@ -20,7 +20,7 @@ class UpdateClientForm(UserChangeForm):
     first_name = forms.CharField( max_length=30, required=False, help_text='Optional.',widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.', widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(max_length=255, help_text='Required. Inform a valid email address.', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    username=forms.CharField(max_length=30,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    username = forms.CharField(max_length=30,widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
