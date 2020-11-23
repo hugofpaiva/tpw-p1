@@ -470,7 +470,7 @@ def adminApps(request):
         return redirect('/login')
 
 def handler404(request):
-    response = render('notfound.html')
+    response = render(request, 'notfound.html')
     response.status_code = 404
     return response
 

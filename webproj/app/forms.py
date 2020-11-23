@@ -67,10 +67,8 @@ class EditProductForm(forms.Form):
     name = forms.CharField(max_length=50)
     icon=forms.URLField()
     description=forms.CharField(max_length=50)
-
-    # nao sei porque esta a dar redirect no form
-    #category = forms.ModelChoiceField(queryset=Category.objects.all())
-    #developer = forms.ModelChoiceField(queryset=Developer.objects.all())
+    category = forms.ModelChoiceField(queryset=Category.objects.all())
+    developer = forms.ModelChoiceField(queryset=Developer.objects.all())
 
 class AddBalanceForm(forms.Form):
     user = forms.CharField()
