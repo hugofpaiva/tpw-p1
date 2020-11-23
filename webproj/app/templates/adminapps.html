@@ -51,7 +51,7 @@
 
                              </td>
 
-                             <td align="center"><a href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%;" class="site-btn">Edit </a></td>
+                             <td align="center"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%;" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
@@ -117,8 +117,18 @@
         </div>
       </div>
     </div>
-    {% block javascript %}
+    {% if error %}
+    <script type="text/javascript">
+            var form = document.getElementById("myForm")
+            if (id!= null){
+                console.log("yauu")
+                //ADICIONAR AQUI
+            }
+    </script>
+    {% endif %}
 
+
+    {% block javascript %}
         <script>
         function  get_prod(id,name,icon,description){
             prodid=id
