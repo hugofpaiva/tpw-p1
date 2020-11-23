@@ -42,13 +42,13 @@
                        {% for p in purchases %}
                             <tr>
                              <td>{{ p.client.user.first_name }} {{ p.client.user.last_name }}</td>
-                             <td>{{ p.product.name }}</td>
+                             <td>{{ p.product_plan.product.name }}</td>
                              <td>
-                                 {{ p.product.pricing_plan.first.plan_type }}
+                                 {{ p.product_plan.plan_type }}
 
                              </td>
                              <td>
-                                 {{ p.product.pricing_plan.first.price }}€</td>
+                                 {{ p.product_plan.price }}€</td>
                             <td>
                                  {{ p.created_at }}</td>
                             <td>

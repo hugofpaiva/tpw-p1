@@ -37,7 +37,8 @@ def indexView(request):
             productsBanner.append(prod)
 
     # Vai contar o nº de ocorrências noutra tabela e ordenar pelas ocorrências
-    bestSellers = Product.objects.annotate(numVendasProd=Count('purchase'))
+    bestSellersPlans = Product_Pricing_Plan.objects.annotate(numVendasProd=Count('purchase'))
+    bestSellers=Product.objects.filter(pricing_plan__in=bestSellersPlans)
 
     bestSellers = list(bestSellers[:6])
 
@@ -169,7 +170,8 @@ class Products_Forms_Processing:
         paymenttype = form.cleaned_data.get("paymenttype")
         valuetopay = Product_Pricing_Plan.objects.get(id=paymenttype)
         print(valuetopay.price)
-        p = Purchase.objects.filter(client=self.client, product=self.product)
+        p = Purchase.objects.filter(client=self.client, product_plan__product_id=self.product)
+        print(p)
         #check if client has already the product
         if p.exists() and p[0].has_paid_until():
             request.session.__setitem__("last_request_error", "You already have this product!")
@@ -180,17 +182,20 @@ class Products_Forms_Processing:
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
         #process the purchase
         else:
+            p=Purchase(client=self.client,product_plan_id=paymenttype)
             if valuetopay.plan_type != 'FREE':
                 if valuetopay.plan_type == 'MONTHLY':
                     print(datetime.date.today())
                     p.set_paid_until(datetime_offset_by_months(datetime.date.today()))
-                else:
+                elif valuetopay.plan_type == 'ANNUAL':
                     oneyear = datetime.date.today()
                     for i in range(1, 13):
                         oneyear = datetime_offset_by_months(oneyear)
+                    print("pew",p)
                     p.set_paid_until(oneyear)
             self.client.balance -= valuetopay.price
             self.client.save()
+
             p.save()
             request.session.__setitem__("last_request_success", "Success in the completion of the purchase!" )
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -254,7 +259,7 @@ def prodDetails(request, idprod):
         productbenefits = Prod_Benefits.objects.filter(product=product)
         pricing = Product_Pricing_Plan.objects.filter(product=product)
         categories = product.category.all()
-        totalpurchases = Purchase.objects.filter(product__exact=product).count()
+        totalpurchases = Purchase.objects.filter(product_plan__product=product).count()
         data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
                'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases,
                ' form_fav':form_favorites, 'is_fav': is_fav, 'has_rev': has_reviewed }
@@ -365,8 +370,8 @@ def accountDetails(request):
         else:
             form = fill_form(client)
             form_pw = UpdatePasswordForm(request.user)
-
-        return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
+            client_purch=Purchase.objects.filter(client_id=client.id)
+        return render(request, 'clientdetails.html', {'user': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch})
     else:
         return redirect('/login')
 
@@ -375,6 +380,8 @@ def accountDetails(request):
 def adminPurchases(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
+            for p in Purchase.objects.all():
+                print(p.available_until)
             return render(request, 'adminpurchases.html',
                           {'purchases': Purchase.objects.all().order_by('-id')})
         else:

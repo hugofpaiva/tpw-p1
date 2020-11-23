@@ -29,6 +29,7 @@ class Product(models.Model):
     #def __str__(self):
     #    return str(self.name) + ", " + str(self.category)
 
+    'The default plan of a Product will be its plan with the lowest price'
     @property
     def price(self):
         return Product_Pricing_Plan.objects.filter(product=self).aggregate(Min('price'))['price__min']
@@ -45,14 +46,26 @@ class Client(models.Model):
     favorites=models.ManyToManyField(Product, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     balance = models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
+
     def __str__(self):
         return str(self.user.username)
 
 
+class Product_Pricing_Plan(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.CASCADE, related_name='pricing_plan')
+    plans = (
+        ('FREE', 'Free Plan'),
+        ('MONTHLY', 'Monthly Basic'),
+        ('ANNUAL', 'Annual Pro'),
+    )
+    plan_type=models.CharField(max_length=25, choices=plans, default='FREE')
+    price=models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
+    feature=models.CharField(max_length=100)
 
 class Purchase(models.Model):
     client = models.ForeignKey(Client,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    #TIRAR DEFAULT DPS APENAS PQ DEU MERDA COM AS EXISTING ROWS
+    product_plan = models.ForeignKey(Product_Pricing_Plan,on_delete=models.CASCADE,default=None,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     available_until = models.DateField(null=True, blank=True)
     def set_paid_until(self,date):
@@ -60,7 +73,8 @@ class Purchase(models.Model):
         self.save()
     def has_paid_until(self,current_date=datetime.date.today()):
         # if this parameter is None, then pricing plan is free... for now
-        if self.available_until is None : return  True
+        if self.available_until is None :
+            return  True
         if self.available_until > current_date:
             return False
 
@@ -81,13 +95,3 @@ class Reviews(models.Model):
     date=models.DateField(auto_now_add=True)
     body=models.CharField(max_length=50)
 
-class Product_Pricing_Plan(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE, related_name='pricing_plan')
-    plans = (
-        ('FREE', 'Free Plan'),
-        ('MONTHLY', 'Monthly Basic'),
-        ('ANNUAL', 'Annual Pro'),
-    )
-    plan_type=models.CharField(max_length=25, choices=plans, default='FREE')
-    price=models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
-    feature=models.CharField(max_length=100)
