@@ -335,15 +335,16 @@ def accountDetails(request):
 
         user = User.objects.get(username=request.user.username)
         client = Client.objects.get(user_id=user.id)
-
+        client_purch = Purchase.objects.filter(client_id=client.id)
         # favourites
         fav = client.favorites.all()
-
+        data={'userClient': client ,'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch}
         if request.method == "POST":
             form = UpdateClientForm(request.POST, instance=request.user)
             form_pw = UpdatePasswordForm(request.user, request.POST)
             if 'old_password' not in request.POST:
                 if form.is_valid():
+                    print("entrei")
                     update = form.save()
                     update.client = request.user
                     client = Client.objects.get(user_id=update.client.id)
@@ -354,7 +355,17 @@ def accountDetails(request):
                     #Because after changes in account, the system logout the user
                     login(request, update.client)
                     form=fill_form(client)
-                    return render(request,'clientdetails.html',{'userClient': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser})
+                    form_pw = UpdatePasswordForm(request.user)
+                    data['form'],data['form_pw']=form,form_pw
+                    data['success'] = 'Success Updating the General Information of your Account!'
+
+                    return render(request,'clientdetails.html',data)
+
+                elif not form_pw.is_valid():
+                    form_pw = UpdatePasswordForm(request.user)
+                    data['form']=form
+                    data['form_pw']=form_pw
+                    data['error'] ='There was an Error updating the General Information of your Account. Please Check bellow the details'
             else:
                 if form_pw.is_valid():
                     user = form_pw.save()
@@ -364,16 +375,27 @@ def accountDetails(request):
                     user.save()
                     user.refresh_from_db()
                     #to stay logged in
-
                     #Because after changes in account, the system logout the user
-                    login(request, user.client)
                     form = fill_form(client)
-                    return render(request,'clientdetails.html',{'userClient': client, 'form_pw': form_pw, 'form': form, 'favourites': fav, 'is_superuser':is_superuser})
+                    login(request, user.client)
+                    data['form'], data['form_pw'] = form, form_pw
+                    data['success'] = 'Success Updating your Password!'
+
+                    return render(request,'clientdetails.html',data)
+
+                elif not form.is_valid():
+                    form=fill_form(client)
+                    data['form']=form
+                    data['form_pw']=form_pw
+                    data['error'] ='There was an Error updating your Password. Please Check bellow the details'
+
         else:
             form = fill_form(client)
             form_pw = UpdatePasswordForm(request.user)
-            client_purch=Purchase.objects.filter(client_id=client.id)
-        return render(request, 'clientdetails.html', {'userClient': client, 'form': form, 'form_pw': form_pw, 'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch})
+
+            data['form'],data['form_pw']=form,form_pw
+        print(data)
+        return render(request, 'clientdetails.html',data)
     else:
         return redirect('/login')
 
