@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
 
+from django.template import RequestContext
 from django.utils import timezone
 
 from app.filters import ProductFilter
@@ -446,8 +447,11 @@ def adminApps(request):
     else:
         return redirect('/login')
 
-def notfound(request):
-    return render(request, 'notfound.html')
+def handler404(request):
+    response = render('notfound.html')
+    response.status_code = 404
+    return response
+
 
 
 
