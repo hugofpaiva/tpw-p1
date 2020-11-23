@@ -38,7 +38,7 @@
 		<div id="preloder">
 			<div class="loader"></div>
 		</div>
-
+        <div class="main-content">
 		<!-- Header Section Begin -->
 			<div class="container">
 				<div class="row">
@@ -64,7 +64,6 @@
 					</div>
 					<div class="col-lg-3 col-md-3">
 						<div class="header__nav__option" style="display: flex;">
-							<a href="#" class="search-switch"><img src="{% static "img/icon/search.png" %}" alt=""></a>
 							
 							{% include "loginpartial.html" %}
 						</div>
@@ -79,7 +78,7 @@
 			</div>
 		</header>
 		<!-- Header Section End -->
-        <div class="main-content">
+
         {% block content%}{% endblock %}
 		<!-- Footer Section Begin -->
 		<footer class="footer">
@@ -99,28 +98,21 @@
 
 						</div>
 					</div>
+                    <div class="col-lg-2 col-md-3 col-sm-6">
+						<div class="footer__widget">
+							<a href="{% url "shop" %}"><h6>Shopping</h6></a>
+                            <ul>
+								<li><a href="{% url "shop" %}">Shop</a></li>
+								<li><a href="{% url "accountDetails" %}">Account</a></li>
+							</ul>
+						</div>
+					</div>
 					<div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
 						<div class="footer__widget">
-							<h6>Shopping</h6>
-							<ul>
-								<li><a href="#">Clothing Store</a></li>
-								<li><a href="#">Trending Shoes</a></li>
-								<li><a href="#">Accessories</a></li>
-								<li><a href="#">Sale</a></li>
-							</ul>
+							<a href="{% url "aboutus" %}"><h6>About Us</h6></a>
 						</div>
 					</div>
-					<div class="col-lg-2 col-md-3 col-sm-6">
-						<div class="footer__widget">
-							<h6>Shopping</h6>
-							<ul>
-								<li><a href="#">Contact Us</a></li>
-								<li><a href="#">Payment Methods</a></li>
-								<li><a href="#">Delivery</a></li>
-								<li><a href="#">Return & Exchanges</a></li>
-							</ul>
-						</div>
-					</div>
+
 				</div>
 				<div class="row">
 					<div class="col-lg-12 text-center">
@@ -142,20 +134,7 @@
         </div>
 		<!-- Footer Section End -->
 
-		<!-- Search Begin -->
-		<div class="search-model">
-			<div class="h-100 d-flex align-items-center justify-content-center">
-				<div class="search-close-switch">+</div>
-				<form class="search-model-form">
-					<input
-						type="text"
-						id="search-input"
-						placeholder="Search here....."
-					/>
-				</form>
-			</div>
-		</div>
-		<!-- Search End -->
+
 
 		<!-- Js Plugins -->
 		<script src="{% static "js/jquery-3.3.1.min.js" %}"></script>
