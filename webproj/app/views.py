@@ -81,6 +81,7 @@ def indexView(request):
             product.price, 2)
         product.nStars = range(product.stars)
         product.nEmptyStars = range(5 - product.stars)
+    print(len(will_expire))
 
     return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products,'will_expire':will_expire})
 

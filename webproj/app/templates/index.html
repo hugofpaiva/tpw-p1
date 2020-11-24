@@ -5,7 +5,7 @@
 {% block title %}App Store{%endblock%}
 
 {% block content %}
-
+<body onload="test()">
 <!-- Hero Section Begin -->
 <section class="hero">
 	<div class="hero__slider owl-carousel">
@@ -104,12 +104,9 @@
 
 <!-- The Modal -->
 {% if  will_expire %}
-    <div class="modal"  id="myModal_expiring">
 
- {% else %}
-   <div class="modal"  id="myModal">
-{% endif %}
-  <div class="modal-dialog">
+    <div class="modal"  id="myModal_expiring">
+    <div class="modal-dialog">
     <div class="modal-content">
 
       <!-- Modal Header -->
@@ -137,23 +134,20 @@
     </div>
   </div>
 </div>
+{% endif %}
+
      <br>
      <br>
      <br>
+</body>
 {% block javascript %}
-<script>
-
-
-
-
-  console.log("consegui")
-  $('#myModal_expiring').show()
-
-
-
-
-
-
-</script>
+    <script type="text/javascript">
+        function test(){
+            const elementExists = document.getElementById("myModal_expiring");
+            if(elementExists != null){
+                $("#myModal_expiring").modal();
+            }
+        }
+    </script>
 {% endblock %}
 {% endblock %}
