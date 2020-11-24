@@ -1,8 +1,7 @@
+from django.db.models.functions import Round
 from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.models import Count
-
-
 
 from app.filters import ProductFilter
 from app.forms import *
@@ -101,7 +100,6 @@ def shopView(request):
 
     paginator = Paginator(products,12)
     page_number = request.GET.get('page')
-    print(page_number)
     page = paginator.get_page(page_number)
 
     try:
@@ -113,7 +111,6 @@ def shopView(request):
     except InvalidPage:
         return redirect('notfound')
 
-
     categories = Category.objects.all()
 
     developers = Developer.objects.all()
@@ -122,9 +119,9 @@ def shopView(request):
         category.numProd = Product.objects.filter(category__exact=category).count()
 
     for product in products:
-        product.roundPrice = round(product.price, 2)
-        product.nStars = range(int(product.stars))
-        product.nEmptyStars = range(5 - int(product.stars))
+        product.roundPrice = product.price
+        product.nStars = range(product.stars)
+        product.nEmptyStars = range(5 - product.stars)
 
     return render(request, 'shop.html',
                   {'activelem': 'shop', 'products': products, 'page': page,
