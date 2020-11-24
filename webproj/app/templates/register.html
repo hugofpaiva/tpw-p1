@@ -3,6 +3,7 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
+{% load widget_tweaks %}
 
 <div class="row d-flex justify-content-center" style="height:100%; margin-top: 25px">
 	<div class="d-flex justify-content-center col-md-8">
@@ -15,7 +16,7 @@
                 {% for field in form %}
 
 
-					<div class="row"><span style="width: 200px; text-align: left; margin-right: 15px">{{ field.label_tag }}</span><div>{{ field }}</div></div>
+					<div class="row"><span style="width: 200px; text-align: left; margin-right: 15px">{{ field.label_tag }}</span><div>{{ field|add_class:'form-control' }}</div></div>
 
                         {% for error in field.errors %}
                           <p style="color: red">{{ error }}</p>

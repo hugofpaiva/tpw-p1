@@ -36,6 +36,7 @@ class UpdatePasswordForm(PasswordChangeForm):
 
 
 
+
 class PurchaseForm(forms.Form):
     '''
     These two fields of this form correspond to the form that will be used to complete a purchase( if there are no errors in the process of completion)

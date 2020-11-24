@@ -2,6 +2,7 @@
 
 {% load  static %}
 {% block content %}
+{% load widget_tweaks %}
     <head xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
@@ -102,11 +103,11 @@
                 {% if field.name == 'prod' %}
                     {{ field.as_hidden }}
                {% else %}
-                    <div class="d-flex flex-column">
+                    <div >
 
                         <span>{{ field.label_tag }}</span>
 
-                        {{ field }}
+                        {{ field|add_class:'form-control' }}
                     </div>
                         {% for error in field.errors %}
                           <p style="color: red">{{ error }}</p>

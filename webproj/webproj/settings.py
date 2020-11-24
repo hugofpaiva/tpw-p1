@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'django_filters',
     'django_property_filter',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
