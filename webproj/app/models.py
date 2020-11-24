@@ -10,7 +10,7 @@ from django.db.models.functions import Ceil
 
 
 class Developer(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50,unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -82,8 +82,9 @@ class Purchase(models.Model):
         if self.available_until is None:
             return True
         tmp=self.available_until.replace(tzinfo=None)
-        if tmp > current_date:
-            return False
+        return tmp > current_date
+
+
 
 
 class Prod_Benefits(models.Model):

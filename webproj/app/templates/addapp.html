@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load  static %}
+{% block content %}
+<body>
+<div class="container" style="justify-content: center">
+        <form method="post">
+                {% csrf_token %}
+            {% for field in form %}
+                <p>
+                {{ field.label_tag }}
+                {{ field }}
+                </p>
+            {% endfor %}
+                <div class="text-right mt-3">
+                    <button type="submit" class="site-btn">Save changes</button>&nbsp;
+                </div>
+                </form>
+
+</div>
+</body>
+{% endblock %}

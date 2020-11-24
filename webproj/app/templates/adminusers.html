@@ -27,6 +27,7 @@
           <div class="tab-content">
              <div class="tab-pane" id="admin-purchases" style="display: block">
                  <div class="card-body pb-2">
+                 {% if users %}
                    <table class="table" width="100%" align="center">
                      <thead  style="background-color: black; border: 0; color: white;">
                        <tr>
@@ -53,6 +54,9 @@
                        {% endfor %}
                      </tbody>
                    </table>
+                  {% else %}
+                     <h4 class="text-center"> No users found</h4>
+                 {% endif %}
                  </div>
             </div>
           </div>

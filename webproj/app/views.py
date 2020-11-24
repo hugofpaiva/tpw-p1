@@ -495,5 +495,23 @@ def aboutus(request):
     return render(request,"about.html")
 
 
-
-
+def addApp(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        data={}
+        if request.method == 'POST':
+            form=AddProductForm(request.POST)
+            data['form']=form
+            if form.is_valid():
+                name=form.cleaned_data['name']
+                icon=form.cleaned_data['icon']
+                description=form.cleaned_data['description']
+                prod = Product(name=name,icon=icon,description=description)
+                prod.category,prod.developer=form.cleaned_data['category'],form.cleaned_data['developer']
+                prod.save()
+                data['success']='Sucessing adding new App!'
+            else:
+                data['error'] = 'Some error Ocurred. Check bellow for details'
+        else:
+            data['form'] = AddProductForm()
+        return render(request,'addapp.html',data)
+    return  redirect('notfound')
