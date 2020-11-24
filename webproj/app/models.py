@@ -7,6 +7,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 from django.db.models import Min, Avg
 from django.db.models.functions import Ceil
+import math
 
 
 class Developer(models.Model):
@@ -34,7 +35,7 @@ class Product(models.Model):
 
     @property
     def price(self):
-        return Product_Pricing_Plan.objects.filter(product=self).aggregate(Min('price'))['price__min']
+        return round(Product_Pricing_Plan.objects.filter(product=self).aggregate(Min('price'))['price__min'],2)
 
     @property
     def stars(self):
