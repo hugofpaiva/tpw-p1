@@ -149,7 +149,9 @@
 		<script src="{% static "js/main.js" %}"></script>
         <script src="{% static "js/processData.js" %}"></script>
         <script type="text/javascript">
+
       {% if activelem %} $("li#{{activelem}}").addClass("active") {% endif %}
         </script>
+    {% block javascript%}{% endblock %}
 	</body>
 </html>

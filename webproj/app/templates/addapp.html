@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% load  static %}
 {% block content %}
-<body>
 <div class="container" style="justify-content: center">
+        <p class="ok">iasjdassd</p>
         <form method="post">
                 {% csrf_token %}
             {% for field in form %}
@@ -17,5 +17,16 @@
                 </form>
 
 </div>
-</body>
+
 {% endblock %}
+
+{% block javascript %}
+
+        <script>
+        console.log("ok")
+        $().ready(function (){
+            alert("DANIEL GAY")
+        })
+
+    </script>
+    {% endblock %}
