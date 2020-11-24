@@ -33,7 +33,7 @@
         {% for field in form_plan %}
                 {% if field.name == 'prod' %}
                     {{ field.has_hidden }}
-                      <p style="color: red">{{ field.errors}}</p>
+                      <p style="color: #ff0000">{{ field.errors}}</p>
                 {% else %}
 
                 <p>

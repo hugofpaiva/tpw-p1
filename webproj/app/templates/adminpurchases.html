@@ -55,7 +55,12 @@
                             <td>
                                  {{ p.created_at }}</td>
                             <td>
-                                 {{ p.available_until }}</td>
+                                {% if p.available_until == None %}
+                                     Not Applicable
+                                {% else %}
+                                 {{ p.available_until }}
+                                {% endif %}
+                            </td>
                            </tr>
                        {% endfor %}
                      </tbody>
