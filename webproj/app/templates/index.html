@@ -124,16 +124,9 @@
         paying, just close the modal
 
       </div>
-         <ul class="list-group list-group-flush">
-             {% for app in will_expire %}
-                <li class="list-group-item">
-                  <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="check{{app.id}}">
-                    <label class="custom-control-label" for="check{{app.id}}">{{ app.product_plan.product.name }}</label>
-                  </div>
-                </li>
-             {% endfor %}
-         </ul>
+         {% for field in will_expire  %}
+             {{ field }}
+         {% endfor %}
 
       <!-- Modal footer -->
       <div class="modal-footer">
@@ -157,6 +150,7 @@
             const elementExists = document.getElementById("myModal_expiring");
             if(elementExists != null){
                 $("#myModal_expiring").modal();
+                $('select').niceSelect("destroy")
             }
         }
 
@@ -164,12 +158,9 @@
 
                 console.log("cheguei");
                 var array = [];
-                {% for app in will_expire %}
-                    if(document.getElementById("check{{app.id}}").checked == true){
-                        array.push("{{ app.product_plan.product.name }}");
-                    }
-                {% endfor %}
+                $('#myModal_expiring').submit()
                 console.log(array);
+
             }
     </script>
 {% endblock %}

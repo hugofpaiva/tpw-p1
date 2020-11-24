@@ -9,7 +9,7 @@ from app.models import *
 import random
 from django.contrib.auth import  login
 import datetime
-
+import json
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 
@@ -18,69 +18,90 @@ from django.shortcuts import render, redirect
 def checkpayments(request,client):
     client_purchases=Purchase.objects.filter(client=client)
     if client_purchases.exists():
-        purchases_to_pay=[p for p in client_purchases.all() if p.available_until != None and not p.has_paid_until()]
+        purchases_to_pay=[p for p in client_purchases.all() if p.available_until != None and  p.has_paid_until()]
+        print(purchases_to_pay)
         #purchases that will expire between today and one week
         today = datetime.datetime.now()
         one_week =  today+ datetime.timedelta(days=50)
-        will_expire=[ pur for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
+        will_expire=[ ('pur_'+str(pur), pur) for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
         return will_expire
     return []
 
 def indexView(request):
-    will_expire=[]
+
+    data={}
     if request.user.is_authenticated and request.user.last_login is not None:
-        if request.user.last_login.replace(tzinfo=None,microsecond=0)==datetime.datetime.now().replace(microsecond=0):
-            client=Client.objects.filter(user_id=request.user.id)[0]
-            will_expire=checkpayments(request , client)
-    numBanners = random.randint(2, 6)
-    productsBanner = []
-    totalProds = Product.objects.count()
-    Product.objects = Product.objects.filter()
-    for _ in range(numBanners):
-        index = random.randint(0, totalProds - 1)
+        if request.method == 'POST':
 
-        prod = Product.objects.all()[index]
+            form=Expiring_Products_Form(request.POST,expiring_choices=())
+            print("entrei")
+            if form.is_valid():
+                print(form.cleaned_data)
+                choices_purchs=form.cleaned_data['expiring_prods']
+                client=Client.objects.filter(user_id=request.user.id)
+                for purch in choices_purchs:
+                    print("aaaaa")
+                    print(purch.product_plan.price)
+                return redirect('index')
 
-        if prod not in productsBanner:
-            productsBanner.append(prod)
-
-    # Vai contar o nº de ocorrências noutra tabela e ordenar pelas ocorrências
-    bestSellersPlans = Product_Pricing_Plan.objects.annotate(numVendasProd=Count('purchase'))
-    bestSellers=Product.objects.filter(pricing_plan__in=bestSellersPlans)
-
-    bestSellers = list(bestSellers[:6])
-
-    for best in bestSellers:
-        best.tags = "best"
-
-    newArrivals = Product.objects.all().order_by('-id')
-
-    newArrivalsDistinct = []
-
-    count = 0
-    for arrival in newArrivals:
-        if (count == 6):
-            break
-        if arrival not in bestSellers:
-            arrival.tags = "new"
-            arrival.new = True
-            newArrivalsDistinct.append(arrival)
-            count += 1
         else:
-            index = bestSellers.index(arrival)
-            bestSellers[index].new = True
-            bestSellers[index].tags += " new"
+            if request.user.last_login.replace(tzinfo=None,microsecond=0)==datetime.datetime.now().replace(microsecond=0):
+                client=Client.objects.filter(user_id=request.user.id)[0]
+                will_expire=checkpayments(request , client)
+                form=Expiring_Products_Form(expiring_choices=will_expire)
+                data['will_expire']=form
 
-    products = newArrivalsDistinct + bestSellers
+    if request.method=='GET':
+        numBanners = random.randint(2, 6)
+        productsBanner = []
+        totalProds = Product.objects.count()
+        Product.objects = Product.objects.filter()
+        for _ in range(numBanners):
+            index = random.randint(0, totalProds - 1)
 
-    for product in products:
-        product.Roundprice = round(
-            product.price, 2)
-        product.nStars = range(product.stars)
-        product.nEmptyStars = range(5 - product.stars)
-    print(len(will_expire))
+            prod = Product.objects.all()[index]
 
-    return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products,'will_expire':will_expire})
+            if prod not in productsBanner:
+                productsBanner.append(prod)
+
+        # Vai contar o nº de ocorrências noutra tabela e ordenar pelas ocorrências
+        bestSellersPlans = Product_Pricing_Plan.objects.annotate(numVendasProd=Count('purchase'))
+        bestSellers=Product.objects.filter(pricing_plan__in=bestSellersPlans)
+
+        bestSellers = list(bestSellers[:6])
+
+        for best in bestSellers:
+            best.tags = "best"
+
+        newArrivals = Product.objects.all().order_by('-id')
+
+        newArrivalsDistinct = []
+
+        count = 0
+        for arrival in newArrivals:
+            if (count == 6):
+                break
+            if arrival not in bestSellers:
+                arrival.tags = "new"
+                arrival.new = True
+                newArrivalsDistinct.append(arrival)
+                count += 1
+            else:
+                index = bestSellers.index(arrival)
+                bestSellers[index].new = True
+                bestSellers[index].tags += " new"
+
+        products = newArrivalsDistinct + bestSellers
+        for product in products:
+            product.Roundprice = round(
+                product.price, 2)
+            product.nStars = range(product.stars)
+            product.nEmptyStars = range(5 - product.stars)
+        data['products']=products
+        data['productsBanner']=productsBanner
+        data['activelem'] ='home'
+
+    return render(request, 'index.html', data)
 
 
 def shopView(request):
@@ -533,7 +554,7 @@ def addApp(request):
             data['form'] = form
             data['form_plan']=form_plan
             if form.is_valid() and form_plan.is_valid():
-                print(form_plan.cleaned_data)
+
                 if form_plan.cleaned_data['price']>0.00 and form_plan.cleaned_data['plan'] =='FREE':
                     data['error'] = "You cannot add Price to a Free plan Type!"
                 elif form_plan.cleaned_data['price']== 0.00 and form_plan.cleaned_data['plan'] !='FREE':
@@ -544,8 +565,8 @@ def addApp(request):
                     app=Product.objects.filter(name=app_name)[0]
                     pricing_plan=Product_Pricing_Plan(product=app)
                     pricing_plan.plan_type=form_plan.cleaned_data['plan']
-                    pricing_plan.price=form_plan.cleaned_data['price']
-                    pricing_plan.description=form_plan.cleaned_data['description']
+                    pricing_plan.price = form_plan.cleaned_data['price']
+                    pricing_plan.feature = form_plan.cleaned_data['feature']
                     pricing_plan.save()
                     data['success'] = 'Sucessing adding new App!'
             else:
@@ -553,5 +574,6 @@ def addApp(request):
         else:
             data['form'] = AddProductForm()
             data['form_plan'] = AddPricingPlan()
+
         return render(request,'addapp.html', data)
     return redirect('notfound')
