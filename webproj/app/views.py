@@ -34,13 +34,11 @@ def indexView(request):
         if request.method == 'POST':
 
             form=Expiring_Products_Form(request.POST,expiring_choices=())
-            print("entrei")
             if form.is_valid():
                 print(form.cleaned_data)
                 choices_purchs=form.cleaned_data['expiring_prods']
                 client=Client.objects.filter(user_id=request.user.id)
                 for purch in choices_purchs:
-                    print("aaaaa")
                     print(purch.product_plan.price)
                 return redirect('index')
 
@@ -119,18 +117,7 @@ def shopView(request):
     else:
         products = sorted(products, key=lambda p: p.price)
 
-    paginator = Paginator(products,12)
-    page_number = request.GET.get('page')
-    page = paginator.get_page(page_number)
-
-    try:
-        products = paginator.page(page_number)
-    except PageNotAnInteger:
-        products = paginator.page(1)
-    except EmptyPage:
-        products = []
-    except InvalidPage:
-        return redirect('notfound')
+    products, page = getPaginator(request, products, 12)
 
     categories = Category.objects.all()
 
@@ -189,7 +176,6 @@ class Products_Forms_Processing:
         if isinstance(form,PurchaseForm):
             return self.payment_form_process(form,request)
         elif isinstance(form,FavoritesForm):
-            print("cuuuuu")
             return self.favorites_form_process(form, request)
         else:
             return  Http404("Something went wrong")
@@ -212,16 +198,11 @@ class Products_Forms_Processing:
             p=Purchase(client=self.client,product_plan_id=paymenttype)
             if valuetopay.plan_type != 'FREE':
                 if valuetopay.plan_type == 'MONTHLY':
-                    print("crl")
-                    print(datetime.date.today())
-                    print(datetime_offset_by_months(datetime.datetime.now()))
                     p.set_paid_until(datetime_offset_by_months(datetime.datetime.now()))
-                    print(p.available_until)
                 elif valuetopay.plan_type == 'ANNUAL':
                     oneyear = datetime.datetime.now()
                     for i in range(1, 13):
                         oneyear = datetime_offset_by_months(oneyear)
-                    print("pew",p)
                     p.set_paid_until(oneyear)
             self.client.balance -= valuetopay.price
             self.client.save()
@@ -246,12 +227,10 @@ def prodDetails(request, idprod):
     client = Client.objects.filter(user_id=request.user.id)
     client = client[0]
     if request.method == "POST":
-        print(request.session)
         form_purchases,form_favorites = PurchaseForm(request.POST),FavoritesForm(request.POST)
         response=None
         handler = Products_Forms_Processing(client, product)
         if form_purchases.is_valid():
-            print(form_purchases.cleaned_data.items())
             response=handler.check_curr_form(form_purchases,request)
         elif form_favorites.is_valid():
             handler = Products_Forms_Processing(client, product)
@@ -260,7 +239,6 @@ def prodDetails(request, idprod):
     else:
         form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
         reviews = Reviews.objects.filter(product=product).order_by('-date')
-        print(reviews)
         numreviews = reviews.count()
         # --- Django Pagination ---
         paginator = Paginator(reviews, 5)  # shows 1 review per page
@@ -276,7 +254,6 @@ def prodDetails(request, idprod):
             review.nEmptyStars = range(5 - int(review.rating))
 
             if review.author.id == client.id:
-                print("zeg")
                 has_reviewed = True
 
         rate = reviews.aggregate(Avg('rating'))['rating__avg']
@@ -361,16 +338,16 @@ def accountDetails(request):
 
         user = User.objects.get(username=request.user.username)
         client = Client.objects.get(user_id=user.id)
-        client_purch = Purchase.objects.filter(client_id=client.id).order_by('-created_at')
+
+        client_purch, page_purch = getPaginator(request, Purchase.objects.filter(client_id=client.id).order_by('-created_at'), 10, 'page_purch')
         # favourites
-        fav = client.favorites.all()
-        data={'userClient': client ,'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch}
+        fav, page_fav = getPaginator(request, client.favorites.all(), 10, 'page_fav')
+        data={'userClient': client ,'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch, 'page_purch': page_purch, 'page_fav': page_fav}
         if request.method == "POST":
             form = UpdateClientForm(request.POST, instance=request.user)
             form_pw = UpdatePasswordForm(request.user, request.POST)
             if 'old_password' not in request.POST:
                 if form.is_valid():
-                    print("entrei")
                     update = form.save()
                     update.client = request.user
                     client = Client.objects.get(user_id=update.client.id)
@@ -430,10 +407,9 @@ def accountDetails(request):
 def adminPurchases(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            for p in Purchase.objects.all():
-                print(p.available_until)
+            purchases, page = getPaginator(request,Purchase.objects.all().order_by('-id'), 10)
             return render(request, 'adminpurchases.html',
-                          {'purchases': Purchase.objects.all().order_by('-id')})
+                          {'purchases': purchases, 'page':page})
         else:
             return redirect('notfound')
     else:
@@ -459,7 +435,9 @@ def adminUsers(request):
             else:
                 form = AddBalanceForm()
 
-            data['users'], data['form'] = Client.objects.all().order_by('-id'), form
+            users, page = getPaginator(request,Client.objects.all().order_by('-id'), 10)
+
+            data['users'], data['form'], data['page'] = users, form, page
             return render(request, 'adminusers.html', data)
 
         else:
@@ -487,7 +465,10 @@ def adminApps(request):
             else:
                 form = EditProductForm()
 
-            data['products'],data['form'] = Product.objects.all().order_by('-id'), form
+            products, page = getPaginator(request, Product.objects.all().order_by('-id'), 10)
+
+
+            data['products'], data['form'], data['page'] = products, form, page
             return render(request, 'adminapps.html', data)
         else:
             return redirect('notfound')
@@ -554,7 +535,6 @@ def addApp(request):
             data['form'] = form
             data['form_plan']=form_plan
             if form.is_valid() and form_plan.is_valid():
-
                 if form_plan.cleaned_data['price']>0.00 and form_plan.cleaned_data['plan'] =='FREE':
                     data['error'] = "You cannot add Price to a Free plan Type!"
                 elif form_plan.cleaned_data['price']== 0.00 and form_plan.cleaned_data['plan'] !='FREE':
@@ -577,3 +557,19 @@ def addApp(request):
 
         return render(request,'addapp.html', data)
     return redirect('notfound')
+
+def getPaginator(request, qs, per_page, request_page='page'):
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get(request_page)
+    page = paginator.get_page(page_number)
+
+    try:
+        qs = paginator.page(page_number)
+    except PageNotAnInteger:
+        qs = paginator.page(1)
+    except EmptyPage:
+        qs = []
+    except InvalidPage:
+        return redirect('notfound')
+
+    return qs, page

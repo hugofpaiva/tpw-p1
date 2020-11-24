@@ -5,7 +5,6 @@
     <head xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
-    <body>
     <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
     {% if  error is not None %}
        <div class="alert alert-danger" role="alert">
@@ -22,7 +21,7 @@
     </h4>
 
 
-    <div class="card overflow-hidden">
+    <div class="card overflow-hidden" style="margin-bottom: 50px">
       <div class="row no-gutters row-bordered row-border-light">
         <div class="col-md-2 pt-0">
           <div class="list-group list-group-flush account-settings-links">
@@ -59,9 +58,4 @@
       </div>
     </div>
   </div>
-
-     <br>
-     <br>
-     <br>
-    </body>
 {% endblock %}
