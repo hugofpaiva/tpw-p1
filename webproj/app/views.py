@@ -91,9 +91,19 @@ def shopView(request):
     products = ProductFilter(request.GET, queryset=Product.objects.all())
 
     products = products.qs
+    order = request.GET.get('order')
+    if order:
+        if order == 'cost':
+            products = sorted(products, key=lambda p: p.price)
+        elif order == '-cost':
+            products = sorted(products, key=lambda p: p.price, reverse=True)
+        elif order == 'rate':
+            products = sorted(products, key=lambda p: p.stars)
+        elif order == '-rate':
+            products = sorted(products, key=lambda p: p.stars, reverse=True)
 
     productsOffset = products[offset:offset+12]
-    totalProducts = products.count()
+    totalProducts = len(products)
 
     totalPages = math.ceil(totalProducts / 12)
 
