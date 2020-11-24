@@ -239,11 +239,18 @@ function removeAndInsertParam(param, dict){
 
 
 
-
     url.searchParams.delete(param);
 
+
+
     Object.entries(dict).forEach(([k,v]) => {
+        if(url.searchParams.has(k)&&url.searchParams.get(k)==v){
+        url.searchParams.delete(k)
+    }else{
+
     url.searchParams.set(k, v);
+    }
+
 })
 
     window.location.href = url;

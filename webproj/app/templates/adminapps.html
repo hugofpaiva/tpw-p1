@@ -82,26 +82,27 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
 
+
       <!-- Modal body -->
-         <form id="myForm" name="myFormName" method="post" action=".">
+         <form id="myForm" class="d-flex flex-column justify-content-between" name="myFormName" method="post" action=".">
 
       <div class="modal-body">
-        Edit here this product data
-      <br>
-      <br>
             {% csrf_token %}
             {% for field in form %}
 
                 {% if field.name == 'prod' %}
                     {{ field.as_hidden }}
                {% else %}
-                      <p>
-                        {{ field.label_tag }}<br>
+                    <div class="d-flex flex-column">
+
+                        <span>{{ field.label_tag }}</span>
+
                         {{ field }}
+                    </div>
                         {% for error in field.errors %}
                           <p style="color: red">{{ error }}</p>
                         {% endfor %}
-                      </p>
+
                 {% endif %}
             {% endfor %}
 
@@ -136,10 +137,16 @@
             $("#id_name").val(name)
             $("#id_icon").val(icon)
             $("#id_description").val(description)
+
+
+            $('select').niceSelect("destroy")
+
         }
         function proceed_edit(){
             $("#myForm").submit()
         }
+
+
 
     </script>
     {% endblock %}

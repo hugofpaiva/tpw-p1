@@ -136,10 +136,10 @@ def register(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.refresh_from_db()
             client = Client(user=user)
             client.save()
-            return render(request, 'index.html', {'activelem': 'home'})
+            user.refresh_from_db()
+            return redirect('index')
     else:
         form = SignUpForm()
         return render(request, 'register.html', {'form': form})
@@ -477,7 +477,7 @@ def adminApps(request):
         return redirect('/login')
 
 def handler404(request):
-    response = render('notfound.html')
+    response = render(request, 'notfound.html')
     response.status_code = 404
     return response
 

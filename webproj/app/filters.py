@@ -6,18 +6,18 @@ class ProductFilter(PropertyFilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains', exclude='')
     max_price = PropertyNumberFilter(field_name='price', lookup_expr='lt')
     min_price = PropertyNumberFilter(field_name='price', lookup_expr='gte')
-    price = PropertyNumberFilter(field_name='price')
-    stars = PropertyNumberFilter(field_name='stars')
+    cost = PropertyNumberFilter(field_name='price')
+    rate = PropertyNumberFilter(field_name='stars')
 
     order = PropertyOrderingFilter(
         fields=(
-            ('price', 'price'),
-            ('stars', 'stars'),
+            ('price', 'cost'),
+            ('stars', 'rate'),
         )
     )
 
 
     class Meta:
         model = Product
-        fields = ['max_price', 'min_price', 'price', 'stars', 'category', 'developer', 'name']
+        fields = ['max_price', 'min_price', 'rate', 'category', 'developer', 'name', 'order']
 

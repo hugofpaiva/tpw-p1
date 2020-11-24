@@ -145,36 +145,36 @@
 									>
 										<div class="card-body">
 											<div class="shop__sidebar__size">
-												<label {% if getParams.stars == 1|stringformat:'s' %} class="active" {% endif %} for="xs"
-													onclick="insertParam({'stars':1})">⭐️
+												<label {% if getParams.rate == 1|stringformat:'s' %} class="active" {% endif %} for="xs"
+													onclick="insertParam({'rate':1})">⭐️
 													<input
 														type="radio"
 														id="1*"
                                                     />
 												</label>
-												<label {% if getParams.stars == 2|stringformat:'s' %} class="active" {% endif %} for="sm"
-													onclick="insertParam({'stars':2})">⭐️⭐️
+												<label {% if getParams.rate == 2|stringformat:'s' %} class="active" {% endif %} for="sm"
+													onclick="insertParam({'rate':2})">⭐️⭐️
 													<input
 														type="radio"
 														id="2*"
 													/>
 												</label>
-												<label {% if getParams.stars == 3|stringformat:'s' %} class="active" {% endif %} for="md"
-													onclick="insertParam({'stars':3})">⭐️⭐️⭐️
+												<label {% if getParams.rate == 3|stringformat:'s' %} class="active" {% endif %} for="md"
+													onclick="insertParam({'rate':3})">⭐️⭐️⭐️
 													<input
 														type="radio"
 														id="3*"
 													/>
 												</label>
-												<label {% if getParams.stars == 4|stringformat:'s' %} class="active" {% endif %} for="xl"
-													onclick="insertParam({'stars':4})">⭐️⭐️⭐️⭐️
+												<label {% if getParams.rate == 4|stringformat:'s' %} class="active" {% endif %} for="xl"
+													onclick="insertParam({'rate':4})">⭐️⭐️⭐️⭐️
 													<input
 														type="radio"
 														id="4*"
 													/>
 												</label>
 												<label {% if getParams.stars == 5|stringformat:'s' %} class="active" {% endif %} for="2xl"
-													onclick="insertParam({'stars':5})">⭐️⭐️⭐️⭐️⭐️
+													onclick="insertParam({'rate':5})">⭐️⭐️⭐️⭐️⭐️
 													<input
 														type="radio"
 														id="5*"
@@ -202,16 +202,16 @@
 									<p>Sort by:</p>
 									<select>
 
-                                            <option {% if getParams.order == "price" %} selected {% endif %} value="0">Price Low To High</option>
+                                            <option {% if getParams.order == "cost" %} selected {% endif %} value="0">Price Low To High</option>
 
 
-                                            <option {% if getParams.order == "-price" %} selected {% endif %} value="1">Price High to Low</option>
+                                            <option {% if getParams.order == "-cost" %} selected {% endif %} value="1">Price High to Low</option>
 
 
-                                            <option {% if getParams.order == "stars" %} selected {% endif %} value="2">Rating Low To High</option>
+                                            <option {% if getParams.order == "rate" %} selected {% endif %} value="2">Rating Low To High</option>
 
 
-                                            <option {% if getParams.order == "-stars" %} selected {% endif %} value="3">Rating High to Low</option>
+                                            <option {% if getParams.order == "-rate" %} selected {% endif %} value="3">Rating High to Low</option>
 
 									</select>
 								</div>
