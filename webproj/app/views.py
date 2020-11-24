@@ -110,6 +110,8 @@ def shopView(request):
             products = sorted(products, key=lambda p: p.stars)
         elif order == '-rate':
             products = sorted(products, key=lambda p: p.stars, reverse=True)
+    else:
+        products = sorted(products, key=lambda p: p.price)
 
     productsOffset = products[offset:offset+12]
     totalProducts = len(products)
