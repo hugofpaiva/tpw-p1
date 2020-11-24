@@ -83,8 +83,14 @@ class AddDeveloper(forms.ModelForm):
     class Meta:
         model = Developer
         fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }
 
 class AddCategory(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }

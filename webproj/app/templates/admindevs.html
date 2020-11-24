@@ -36,14 +36,13 @@
         </div>
         <div class="col-md-10">
           <div class="tab-content">
-             <div class="tab-pane" id="admin-purchases" style="display: block" align="center">
+             <div class="tab-pane" id="admin-purchases" style="display: block; padding: 70px 0;" align="center">
                  <div class="card-body pb-2" >
                      <h3>Write the developer name</h3>
                      <br>
                      <form method="post">
                 {% csrf_token %}
                   <div class="form-group">
-                         {{ form.name.label_tag }}
                          {{ form.name }}
 
                   </div>
