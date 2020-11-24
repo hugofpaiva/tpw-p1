@@ -39,7 +39,7 @@ urlpatterns = [
     path('admin/users/', views.adminUsers, name="adminUsers"),
     path('admin/apps/', views.adminApps, name="adminApps"),
 
-
+    path('admin/apps/addApp', views.addApp, name='addApp'),
     path('404/', views.handler404, name="notfound"),
 
     path('about/', views.aboutus, name="aboutus"),
@@ -49,5 +49,6 @@ urlpatterns = [
     #add/edit review
 
     path('shop/product/<int:idprod>/review', views.review_View, name='prodreview')
+
 
 ]

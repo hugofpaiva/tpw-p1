@@ -71,3 +71,10 @@ class AddBalanceForm(forms.Form):
     user = forms.CharField()
     balance = forms.DecimalField(max_value=200)
 
+
+class AddProductForm(forms.Form):
+    name= forms.CharField(max_length=50)
+    icon=forms.URLField()
+    description=forms.CharField(max_length=50)
+    category=forms.ModelChoiceField(queryset=Category.objects.all())
+    developer=forms.ModelChoiceField(queryset=Developer.objects.all())

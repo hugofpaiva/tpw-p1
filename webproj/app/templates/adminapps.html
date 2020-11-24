@@ -31,12 +31,16 @@
           <div class="tab-content">
              <div class="tab-pane" id="admin-purchases" style="display: block">
                  <div class="card-body pb-2">
+                 {% if products %}
                    <table class="table" width="100%" align="center">
+                   <a class="site-btn" style="float: right"href="{% url 'addApp' %}" > Add Product</a>
                      <thead  style="background-color: black; border: 0; color: white;">
                        <tr>
                          <th scope="col">Icon</th>
                          <th scope="col">Name</th>
-                         <th scope="col">Category</th><th scope="col" >Edit</th>
+                         <th scope="col">Category</th>
+                        <th scope="col" style="padding-left: 75px">Edit</th>
+
                        </tr>
                      </thead>
                      <tbody>
@@ -51,11 +55,14 @@
 
                              </td>
 
-                             <td align="center"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%;" class="site-btn">Edit </a></td>
+                             <td align="left" style="wi: 0px;"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
                    </table>
+                 {% else %}
+                     <h4 class="text-center"> There are not any Apps</h4>
+                 {% endif %}
                  </div>
             </div>
           </div>
