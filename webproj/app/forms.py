@@ -78,3 +78,13 @@ class AddProductForm(forms.Form):
     description=forms.CharField(max_length=50)
     category=forms.ModelChoiceField(queryset=Category.objects.all())
     developer=forms.ModelChoiceField(queryset=Developer.objects.all())
+
+class AddDeveloper(forms.ModelForm):
+    class Meta:
+        model = Developer
+        fields = ['name']
+
+class AddCategory(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['title']
