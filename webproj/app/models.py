@@ -1,5 +1,4 @@
 import datetime
-from datetime import tzinfo
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -7,7 +6,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 from django.db.models import Min, Avg
 from django.db.models.functions import Ceil
-import math
 
 
 class Developer(models.Model):
