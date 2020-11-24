@@ -78,3 +78,19 @@ class AddProductForm(forms.Form):
     description=forms.CharField(max_length=50)
     category=forms.ModelChoiceField(queryset=Category.objects.all())
     developer=forms.ModelChoiceField(queryset=Developer.objects.all())
+
+class AddDeveloper(forms.ModelForm):
+    class Meta:
+        model = Developer
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }
+
+class AddCategory(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }

@@ -472,6 +472,48 @@ def adminApps(request):
     else:
         return redirect('/login')
 
+def adminDevs(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            data={}
+            if request.method == 'POST':
+                form = AddDeveloper(request.POST)
+                if form.is_valid():
+                    form.save()
+                    data['success'] = 'Success adding the developer!'
+                else:
+                    data['error'] = 'The developer already exists!'
+            else:
+                form = AddDeveloper()
+
+            data['form'] = form
+            return render(request, 'admindevs.html', data)
+        else:
+            return redirect('notfound')
+    else:
+        return redirect('/login')
+
+def adminCat(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            data={}
+            if request.method == 'POST':
+                form = AddCategory(request.POST)
+                if form.is_valid():
+                    form.save()
+                    data['success'] = 'Success adding the category!'
+                else:
+                    data['error'] = 'The category already exists!'
+            else:
+                form = AddCategory()
+
+            data['form'] = form
+            return render(request, 'admincat.html', data)
+        else:
+            return redirect('notfound')
+    else:
+        return redirect('/login')
+
 def handler404(request):
     response = render(request, 'notfound.html')
     response.status_code = 404
