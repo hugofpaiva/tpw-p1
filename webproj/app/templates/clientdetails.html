@@ -153,6 +153,7 @@
                       <th scope="col">Name</th>
                       <th scope="col">Price </th>
                       <th scope="col">Date Acquisition</th>
+                      <th scope="col">Payment Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -161,6 +162,11 @@
                           <td scope="row">{{ purch.product_plan.product.name }}</td>
                           <td>{{ purch.product_plan.price }}</td>
                           <td> {{ purch.created_at }}
+                           {% if purch.available_until == None %}
+                            <td> Not Applicable</td>
+                            {% else %}
+                            <td>{{ purch.available_until }}</td>
+                            {% endif %}
                           </td>
                         </tr>
                     {% endfor %}
@@ -177,6 +183,7 @@
       </div>
     </div>
   </div>
+
 
      <br>
      <br>

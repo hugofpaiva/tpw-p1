@@ -4,30 +4,39 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
 
-from django.template import RequestContext
-from django.utils import timezone
+
 
 from app.filters import ProductFilter
 from app.forms import *
 from app.models import *
 import random
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import  login
 import datetime
-import calendar
-from django.contrib import messages
+
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
+def checkpayments(request,client):
+    client_purchases=Purchase.objects.filter(client=client)
+    if client_purchases.exists():
+        purchases_to_pay=[p for p in client_purchases.all() if p.available_until != None and not p.has_paid_until()]
+        #purchases that will expire between today and one week
+        today = datetime.datetime.now()
+        one_week =  today+ datetime.timedelta(days=50)
+        will_expire=[ pur for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
+        return will_expire
+    return []
 
 def indexView(request):
+    will_expire=[]
+    if request.user.is_authenticated and request.user.last_login is not None:
+        if request.user.last_login.replace(tzinfo=None,microsecond=0)==datetime.datetime.now().replace(microsecond=0):
+            client=Client.objects.filter(user_id=request.user.id)[0]
+            will_expire=checkpayments(request , client)
     numBanners = random.randint(2, 6)
     productsBanner = []
-
-    tot_purch = []
     totalProds = Product.objects.count()
     Product.objects = Product.objects.filter()
     for _ in range(numBanners):
@@ -73,7 +82,7 @@ def indexView(request):
         product.nStars = range(product.stars)
         product.nEmptyStars = range(5 - product.stars)
 
-    return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products})
+    return render(request, 'index.html', {'activelem': 'home', 'productsBanner': productsBanner, 'products': products,'will_expire':will_expire})
 
 
 def shopView(request):
@@ -181,9 +190,7 @@ class Products_Forms_Processing:
     def payment_form_process(self, form,request):
         paymenttype = form.cleaned_data.get("paymenttype")
         valuetopay = Product_Pricing_Plan.objects.get(id=paymenttype)
-        print(valuetopay.price)
         p = Purchase.objects.filter(client=self.client, product_plan__product_id=self.product)
-        print(p)
         #check if client has already the product
         if p.exists() and p[0].has_paid_until():
             request.session.__setitem__("last_request_error", "You already have this product!")
@@ -346,7 +353,7 @@ def accountDetails(request):
 
         user = User.objects.get(username=request.user.username)
         client = Client.objects.get(user_id=user.id)
-        client_purch = Purchase.objects.filter(client_id=client.id)
+        client_purch = Purchase.objects.filter(client_id=client.id).order_by('-created_at')
         # favourites
         fav = client.favorites.all()
         data={'userClient': client ,'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch}
@@ -405,7 +412,7 @@ def accountDetails(request):
             form_pw = UpdatePasswordForm(request.user)
 
             data['form'],data['form_pw']=form,form_pw
-        print(data)
+
         return render(request, 'clientdetails.html',data)
     else:
         return redirect('/login')

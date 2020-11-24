@@ -1,5 +1,5 @@
-
 import datetime
+from datetime import tzinfo
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -10,24 +10,28 @@ from django.db.models.functions import Ceil
 
 
 class Developer(models.Model):
-    name=models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class Category(models.Model):
-    title=models.CharField(max_length=50,unique=True)
+    title = models.CharField(max_length=50, unique=True)
+
     def __str__(self):
         return str(self.title)
 
+
 class Product(models.Model):
-    name=models.CharField(max_length=50,unique=True)
-    icon=models.URLField()
-    description=models.CharField(max_length=50)
-    category=models.ManyToManyField(Category)
-    developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, unique=True)
+    icon = models.URLField()
+    description = models.CharField(max_length=50)
+    category = models.ManyToManyField(Category)
+    developer = models.ForeignKey(Developer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
     'The default plan of a Product will be its plan with the lowest price'
+
     @property
     def price(self):
         return Product_Pricing_Plan.objects.filter(product=self).aggregate(Min('price'))['price__min']
@@ -39,57 +43,63 @@ class Product(models.Model):
             stars = 0
         return int(stars)
 
+
 class Client(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE, related_name='profile')
-    favorites=models.ManyToManyField(Product, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    favorites = models.ManyToManyField(Product, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    balance = models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
+    balance = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
 
     def __str__(self):
         return str(self.user.username)
 
 
 class Product_Pricing_Plan(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE, related_name='pricing_plan')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='pricing_plan')
     plans = (
         ('FREE', 'Free Plan'),
         ('MONTHLY', 'Monthly Basic'),
         ('ANNUAL', 'Annual Pro'),
     )
-    plan_type=models.CharField(max_length=25, choices=plans, default='FREE')
-    price=models.DecimalField(max_digits=5,decimal_places=2,default=0.00)
-    feature=models.CharField(max_length=100)
+    plan_type = models.CharField(max_length=25, choices=plans, default='FREE')
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    feature = models.CharField(max_length=100)
+
 
 class Purchase(models.Model):
-    client = models.ForeignKey(Client,on_delete=models.CASCADE)
-    #TIRAR DEFAULT DPS APENAS PQ DEU MERDA COM AS EXISTING ROWS
-    product_plan = models.ForeignKey(Product_Pricing_Plan,on_delete=models.CASCADE,default=None)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    # TIRAR DEFAULT DPS APENAS PQ DEU MERDA COM AS EXISTING ROWS
+    product_plan = models.ForeignKey(Product_Pricing_Plan, on_delete=models.CASCADE, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
-    available_until = models.DateTimeField(null=True, blank=True,default=None)
-    def set_paid_until(self,date):
-        self.available_until=date
+    available_until = models.DateTimeField(null=True, blank=True, default=None)
+
+    def set_paid_until(self, date):
+        self.available_until = date
         self.save()
-    def has_paid_until(self,current_date=datetime.datetime.now()):
+
+    def has_paid_until(self, current_date=datetime.datetime.now()):
         # if this parameter is None, then pricing plan is free... for now
-        if self.available_until is None :
-            return  True
-        if self.available_until > current_date:
+        if self.available_until is None:
+            return True
+        tmp=self.available_until.replace(tzinfo=None)
+        if tmp > current_date:
             return False
 
+
 class Prod_Benefits(models.Model):
-    title=models.CharField(max_length=50)
-    description=models.CharField(max_length=500)
-    product=models.ForeignKey(Product,on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    description = models.CharField(max_length=500)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
 
 class Reviews(models.Model):
-    author=models.ForeignKey(Client,on_delete=models.CASCADE)
+    author = models.ForeignKey(Client, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    rating=models.IntegerField(
+    rating = models.IntegerField(
         validators=[
             MaxValueValidator(5),
             MinValueValidator(0)
         ]
     )
-    date=models.DateField(auto_now_add=True)
-    body=models.CharField(max_length=50)
-
+    date = models.DateField(auto_now_add=True)
+    body = models.CharField(max_length=50)
