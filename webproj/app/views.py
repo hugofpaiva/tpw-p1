@@ -101,14 +101,18 @@ def shopView(request):
 
     paginator = Paginator(products,12)
     page_number = request.GET.get('page')
+    print(page_number)
     page = paginator.get_page(page_number)
 
     try:
         products = paginator.page(page_number)
     except PageNotAnInteger:
         products = paginator.page(1)
-    except (InvalidPage, EmptyPage):
+    except EmptyPage:
+        products = []
+    except InvalidPage:
         return redirect('notfound')
+
 
     categories = Category.objects.all()
 

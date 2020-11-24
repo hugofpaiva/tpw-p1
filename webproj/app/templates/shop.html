@@ -221,7 +221,7 @@
 					<div class="row">
 
                         {% for product in products %}
-						<div class="col-lg-4 col-md-6 col-sm-6 product" >
+						<div class="col-lg-4 col-md-6 col-sm-6 product" onclick="document.location.href='{% url 'productdetails' idprod=product.id  %}'">
 								{% if product.stars > 0 %}
 									<div class="product__item sale">
 									{% else %}
@@ -232,18 +232,10 @@
 										class="product__item__pic set-bg"
 										data-setbg="{{ product.icon }}"
 									>
-										<ul class="product__hover">
-											<li>
-												<a href="javascript:console.log('clicke')"
-													><img
-														src="{% static "img/icon/heart.png" %}"
-														alt=""
-												/></a>
-											</li>
-										</ul>
+
 									</div>
 
-									<div class="product__item__text" onclick="document.location.href='/shop/product/{{ product.id }}/'">
+									<div class="product__item__text">
 										<h6>{{ product.name }}</h6>
 									<a class="add-cart">{{ product.description }}</a>
 										<div class="rating">
