@@ -72,9 +72,18 @@ class AddBalanceForm(forms.Form):
     balance = forms.DecimalField(max_value=200)
 
 
-class AddProductForm(forms.Form):
-    name= forms.CharField(max_length=50)
-    icon=forms.URLField()
-    description=forms.CharField(max_length=50)
-    category=forms.ModelChoiceField(queryset=Category.objects.all())
-    developer=forms.ModelChoiceField(queryset=Developer.objects.all())
+class AddProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'icon', 'category','developer']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description':forms.TextInput(attrs={'class': 'form-control'}),
+            'icon':forms.URLInput(attrs={'class': 'form-control'})
+        }
+
+class AddPricingPlan(forms.Form):
+    prod = forms.IntegerField(required=False)
+    plan=forms.ChoiceField(choices=Product_Pricing_Plan.plans)
+    price = forms.DecimalField(max_digits=5,decimal_places=2,initial=0.00 ,widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class': 'form-control'}))

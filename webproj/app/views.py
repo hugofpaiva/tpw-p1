@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Min, Avg, Count
 import math
 
-
+from django.forms import ModelForm
 
 from app.filters import ProductFilter
 from app.forms import *
@@ -503,18 +503,29 @@ def addApp(request):
         data={}
         if request.method == 'POST':
             form=AddProductForm(request.POST)
-            data['form']=form
-            if form.is_valid():
-                name=form.cleaned_data['name']
-                icon=form.cleaned_data['icon']
-                description=form.cleaned_data['description']
-                prod = Product(name=name,icon=icon,description=description)
-                prod.category,prod.developer=form.cleaned_data['category'],form.cleaned_data['developer']
-                prod.save()
-                data['success']='Sucessing adding new App!'
+            form_plan=AddPricingPlan(request.POST)
+            data['form'] = form
+            data['form_plan']=form_plan
+            if form.is_valid() and form_plan.is_valid():
+                print(form_plan.cleaned_data)
+                if form_plan.cleaned_data['price']>0.00 and form_plan.cleaned_data['plan'] =='FREE':
+                    data['error'] = "You cannot add Price to a Free plan Type!"
+                elif form_plan.cleaned_data['price']== 0.00 and form_plan.cleaned_data['plan'] !='FREE':
+                    data['error'] = "You have to add Price to monthly or annual plans!"
+                else:
+                    form.save()
+                    app_name=form.cleaned_data['name']
+                    app=Product.objects.filter(name=app_name)[0]
+                    pricing_plan=Product_Pricing_Plan(product=app)
+                    pricing_plan.plan_type=form_plan.cleaned_data['plan']
+                    pricing_plan.price=form_plan.cleaned_data['price']
+                    pricing_plan.description=form_plan.cleaned_data['description']
+                    pricing_plan.save()
+                    data['success'] = 'Sucessing adding new App!'
             else:
                 data['error'] = 'Some error Ocurred. Check bellow for details'
         else:
             data['form'] = AddProductForm()
-        return render(request,'addapp.html',data)
-    return  redirect('notfound')
+            data['form_plan'] = AddPricingPlan()
+        return render(request,'addapp.html', data)
+    return redirect('notfound')
