@@ -1,8 +1,6 @@
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseNotFound, HttpResponse, Http404, HttpResponseRedirect
-from django.core.paginator import Paginator
-from django.db.models import Min, Avg, Count
-import math
+from django.http import Http404, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
+from django.db.models import Count
 
 
 
@@ -87,20 +85,7 @@ def indexView(request):
 
 
 def shopView(request):
-    # Falta Aplicar nova paginação
-    if request.GET.get('page') is None:
-        pageNumber=1
-    else:
-        pageNumber = int(request.GET.get('page'))
-
-    if pageNumber<1:
-        return redirect('notfound')
-
-    offset = (pageNumber-1)*12
-
-    products = ProductFilter(request.GET, queryset=Product.objects.all())
-
-    products = products.qs
+    products = ProductFilter(request.GET, queryset=Product.objects.all()).qs
     order = request.GET.get('order')
     if order:
         if order == 'cost':
@@ -114,34 +99,32 @@ def shopView(request):
     else:
         products = sorted(products, key=lambda p: p.price)
 
-    productsOffset = products[offset:offset+12]
-    totalProducts = len(products)
+    paginator = Paginator(products,12)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
 
-    totalPages = math.ceil(totalProducts / 12)
+    try:
+        products = paginator.page(page_number)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except (InvalidPage, EmptyPage):
+        return redirect('notfound')
 
     categories = Category.objects.all()
 
     developers = Developer.objects.all()
 
-    if totalPages == 0: totalPages = 1
-    leftPages = totalPages - pageNumber
-    if leftPages <= 2:
-        rangeLeftPages = range(leftPages)
-    else:
-        rangeLeftPages = range(2)
-
     for category in categories:
         category.numProd = Product.objects.filter(category__exact=category).count()
 
-    for product in productsOffset:
-        product.Roundprice = round(product.price, 2)
+    for product in products:
+        product.roundPrice = round(product.price, 2)
         product.nStars = range(int(product.stars))
         product.nEmptyStars = range(5 - int(product.stars))
 
     return render(request, 'shop.html',
-                  {'activelem': 'shop', 'products': productsOffset, 'totalProducts': totalProducts,
-                   'totalPages': totalPages, 'actualPage': pageNumber, 'leftPages': leftPages,
-                   'rangeLeftPages': rangeLeftPages, 'categories': categories, 'developers': developers, 'getParams': request.GET})
+                  {'activelem': 'shop', 'products': products, 'page': page,
+                   'categories': categories, 'developers': developers, 'getParams': request.GET})
 
 
 def register(request):
