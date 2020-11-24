@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from app import views
 from django.contrib.auth import views as auth_views
+from app.forms import *
 
 urlpatterns = [
     path('admin/django/', admin.site.urls),
@@ -38,6 +39,8 @@ urlpatterns = [
     path('admin/purchases/', views.adminPurchases, name="adminPurchases"),
     path('admin/users/', views.adminUsers, name="adminUsers"),
     path('admin/apps/', views.adminApps, name="adminApps"),
+    path('admin/devs/', views.adminDevs, name="adminDevs"),
+    path('admin/cat/', views.adminCat, name="adminCat"),
 
     path('admin/apps/addApp', views.addApp, name='addApp'),
 

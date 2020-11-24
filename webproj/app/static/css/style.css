@@ -911,6 +911,7 @@ ol {
 .product {
 	padding-top: 0;
 	padding-bottom: 60px;
+	cursor: pointer;
 }
 
 .filter__controls {

@@ -194,7 +194,7 @@
 						<div class="row">
 							<div class="col-lg-6 col-md-6 col-sm-6">
 								<div class="shop__product__option__left">
-									<p>Showing {{ actualPage }}–{{ totalPages }} of {{ totalProducts }} results</p>
+									<p>Showing {{ page.number }}–{{ page.paginator.num_pages }} of {{ page.paginator.count }} results</p>
 								</div>
 							</div>
 							<div class="col-lg-6 col-md-6 col-sm-6">
@@ -221,7 +221,7 @@
 					<div class="row">
 
                         {% for product in products %}
-						<div class="col-lg-4 col-md-6 col-sm-6 product" >
+						<div class="col-lg-4 col-md-6 col-sm-6 product" onclick="document.location.href='{% url 'productdetails' idprod=product.id  %}'">
 								{% if product.stars > 0 %}
 									<div class="product__item sale">
 									{% else %}
@@ -232,18 +232,10 @@
 										class="product__item__pic set-bg"
 										data-setbg="{{ product.icon }}"
 									>
-										<ul class="product__hover">
-											<li>
-												<a href="javascript:console.log('clicke')"
-													><img
-														src="{% static "img/icon/heart.png" %}"
-														alt=""
-												/></a>
-											</li>
-										</ul>
+
 									</div>
 
-									<div class="product__item__text" onclick="document.location.href='/shop/product/{{ product.id }}/'">
+									<div class="product__item__text">
 										<h6>{{ product.name }}</h6>
 									<a class="add-cart">{{ product.description }}</a>
 										<div class="rating">
@@ -261,7 +253,7 @@
 
 
 										</div>
-										<h5>{{ product.Roundprice }} €</h5>
+										<h5>{{ product.roundPrice }} €</h5>
 									</div>
 
 								</div>
@@ -272,18 +264,14 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="product__pagination">
-								<a class="active" href="">{{ actualPage }}</a>
-
-
-                                {% for _ in rangeLeftPages %}
-                                    <a href="javascript:insertParam({'page':{{ actualPage|add:forloop.counter }}})">{{ actualPage|add:forloop.counter }} </a>
-                                {% endfor %}
-
-
-                                 {% if leftPages > 2  %}
-                                    <span>...</span>
-                                    <a href="javascript:insertParam({'page':{{ totalPages }}})">{{ totalPages }}</a>
+                                {% if page.has_previous %}
+                                <a href="javascript:insertParam({'page':{{ page.previous_page_number }}})">{{ page.previous_page_number }}</a>
                                 {% endif %}
+								<a class="active" href="">{{ page.number }}</a>
+                                {% if page.has_next %}
+                                <a href="javascript:insertParam({'page':{{ page.next_page_number }} })">{{ page.next_page_number }}</a>
+                                {% endif %}
+
 							</div>
 						</div>
 					</div>

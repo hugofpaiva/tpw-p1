@@ -2,6 +2,7 @@
 
 {% load  static %}
 {% block content %}
+{% load widget_tweaks %}
     <head>
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
@@ -20,6 +21,8 @@
             <a class="list-group-item list-group-item-action" href="/admin/purchases/">Purchases</a>
               <a class="list-group-item list-group-item-action active" href="/admin/users/">Users</a>
               <a class="list-group-item list-group-item-action" href="/admin/apps/">Applications</a>
+              <a class="list-group-item list-group-item-action" href="/admin/devs/">Add Developer</a>
+              <a class="list-group-item list-group-item-action" href="/admin/cat/">Add Category</a>
             <a class="list-group-item list-group-item-action"  href="/account/">Account</a>
           </div>
         </div>
@@ -90,8 +93,8 @@
             {% csrf_token %}
             {% for field in form %}
                   <p>
-                    {{ field.label_tag }}<br>
-                    {{ field }}
+                    {{ field.label_tag }}
+                    <div>{{ field| add_class:'form-control' }}</div>
                     {% for error in field.errors %}
                       <p style="color: red">{{ error }}</p>
                     {% endfor %}

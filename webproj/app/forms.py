@@ -36,6 +36,7 @@ class UpdatePasswordForm(PasswordChangeForm):
 
 
 
+
 class PurchaseForm(forms.Form):
     '''
     These two fields of this form correspond to the form that will be used to complete a purchase( if there are no errors in the process of completion)
@@ -87,3 +88,19 @@ class AddPricingPlan(forms.Form):
     plan=forms.ChoiceField(choices=Product_Pricing_Plan.plans)
     price = forms.DecimalField(max_digits=5,decimal_places=2,initial=0.00 ,widget=forms.NumberInput(attrs={'class': 'form-control'}))
     description = forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+class AddDeveloper(forms.ModelForm):
+    class Meta:
+        model = Developer
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }
+
+class AddCategory(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
+        }
