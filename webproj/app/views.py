@@ -474,16 +474,13 @@ def adminUsers(request):
                 form = AddBalanceForm(request.POST)
                 if form.is_valid():
                     username = form.cleaned_data['user']
-                    user = User.objects.filter(username=username)
-                    if(user.exists()):
-                        client = Client.objects.get(user_id=user.id)
-                        cur_balance = client.balance
-                        client.balance = cur_balance + form.cleaned_data['balance']
-                        client.save()
-                        data['success'] = 'Success editing the product ' + \
-                            user.username
-                    else:
-                        data['error'] = True
+                    user = User.objects.get(username=username)
+                    client = Client.objects.get(user_id=user.id)
+                    cur_balance = client.balance
+                    client.balance = cur_balance + form.cleaned_data['balance']
+                    client.save()
+                    data['success'] = 'Success editing the product ' + \
+                        user.username
                 else:
                     data['error'] = True
             else:
