@@ -474,13 +474,16 @@ def adminUsers(request):
                 form = AddBalanceForm(request.POST)
                 if form.is_valid():
                     username = form.cleaned_data['user']
-                    user = User.objects.get(username=username)
-                    client = Client.objects.get(user_id=user.id)
-                    cur_balance = client.balance
-                    client.balance = cur_balance + form.cleaned_data['balance']
-                    client.save()
-                    data['success'] = 'Success editing the product ' + \
-                        user.username
+                    user = User.objects.filter(username=username)
+                    if(user.exists()):
+                        client = Client.objects.get(user_id=user.id)
+                        cur_balance = client.balance
+                        client.balance = cur_balance + form.cleaned_data['balance']
+                        client.save()
+                        data['success'] = 'Success editing the product ' + \
+                            user.username
+                    else:
+                        data['error'] = True
                 else:
                     data['error'] = True
             else:
@@ -616,8 +619,9 @@ def addApp(request):
             else:
                 data['error'] = 'Some error Ocurred. Check bellow for details'
 
-        data['form'] = AddProductForm()
-        data['form_plan'] = AddPricingPlan()
+        if 'error' not in data:
+            data['form'] = AddProductForm()
+            data['form_plan'] = AddPricingPlan()
 
         return render(request, 'addapp.html', data)
     return redirect('notfound')

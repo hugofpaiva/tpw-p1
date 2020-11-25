@@ -24,7 +24,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=50, unique=True)
     icon = models.URLField()
-    description = models.CharField(max_length=50)
+    description = models.CharField(max_length=150)
     category = models.ManyToManyField(Category)
     developer = models.ForeignKey(Developer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -63,7 +63,7 @@ class Product_Pricing_Plan(models.Model):
     )
     plan_type = models.CharField(max_length=25, choices=plans, default='FREE')
     price = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    feature = models.CharField(max_length=100)
+    feature = models.CharField(max_length=100, blank=True)
 
 
 class Purchase(models.Model):

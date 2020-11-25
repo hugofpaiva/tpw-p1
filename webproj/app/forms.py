@@ -64,7 +64,7 @@ class EditProductForm(forms.Form):
     prod=forms.IntegerField()
     name = forms.CharField(max_length=50)
     icon=forms.URLField()
-    description=forms.CharField(max_length=50)
+    description=forms.CharField(max_length=150)
     category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
     developer = forms.ModelChoiceField(queryset=Developer.objects.all())
 
