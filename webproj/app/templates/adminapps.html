@@ -6,7 +6,7 @@
     <head xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
-    <body>
+    <body onload="test()">
     <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
      {% if  success is not None %}
        <div class="alert alert-success" role="alert">
@@ -58,7 +58,7 @@
 
                              </td>
 
-                             <td align="left" style="wi: 0px;"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
+                             <td align="left" style="wi: 0px;"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}', '{{ p.category }}', '{{ p.developer }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
@@ -94,7 +94,7 @@
 
 
       <!-- Modal body -->
-         <form id="myForm" class="d-flex flex-column justify-content-between" name="myFormName" method="post" action=".">
+         <form id="myForm" name="myFormName" method="post" action=".">
 
       <div class="modal-body">
             {% csrf_token %}
@@ -108,10 +108,11 @@
                         <span>{{ field.label_tag }}</span>
 
                         {{ field|add_class:'form-control' }}
-                    </div>
+
                         {% for error in field.errors %}
                           <p style="color: red">{{ error }}</p>
                         {% endfor %}
+                    </div>
 
                 {% endif %}
             {% endfor %}
@@ -128,25 +129,25 @@
         </div>
       </div>
     </div>
-    {% if error %}
-    <script type="text/javascript">
-            var form = document.getElementById("myForm")
-            if (id!= null){
-                console.log("yauu")
-                //ADICIONAR AQUI
-            }
-    </script>
-    {% endif %}
-
 
     {% block javascript %}
         <script>
-        function  get_prod(id,name,icon,description){
+        function test(){
+            {% if error == True %}
+                $("#modalEditForm").modal();
+                $('select').niceSelect("destroy")
+            {% endif %}
+        }
+
+
+        function  get_prod(id,name,icon,description,category, developer){
             prodid=id
             $("#id_prod").val(id)
             $("#id_name").val(name)
             $("#id_icon").val(icon)
             $("#id_description").val(description)
+            $("#id_category").val(category)
+            $("#id_developer").val(developer)
 
 
             $('select').niceSelect("destroy")
