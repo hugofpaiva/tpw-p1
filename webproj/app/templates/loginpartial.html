@@ -3,7 +3,7 @@
 {% if user.is_authenticated %}
 
 
-<a style="font-size: 18px; color: #111111; font-weight: 600" href="/account/">{{ user }}</a>
+<a style="font-size: 18px; color: #111111; font-weight: 600" href="/account/">{{ user }} ({{ user.profile.balance }}€)</a>
 
 <form id="logoutForm" action="/logout" method="get">
 	{% csrf_token %}

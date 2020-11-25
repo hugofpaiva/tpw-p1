@@ -36,7 +36,6 @@ def indexView(request):
                 client=Client.objects.get(user_id=request.user.id)
 
                 for purch in expiring_choices:
-                    print(purch)
                     purchase = Purchase.objects.get(product_plan__product__name__exact=purch)
                     plan = purchase.product_plan
                     if plan.price < client.balance:
@@ -72,7 +71,6 @@ def indexView(request):
         numBanners = random.randint(2, 6)
         productsBanner = []
         totalProds = Product.objects.count()
-        Product.objects = Product.objects.filter()
         for _ in range(numBanners):
             index = random.randint(0, totalProds - 1)
 
@@ -82,10 +80,12 @@ def indexView(request):
                 productsBanner.append(prod)
 
         # Vai contar o nº de ocorrências noutra tabela e ordenar pelas ocorrências
-        bestSellersPlans = Product_Pricing_Plan.objects.annotate(numVendasProd=Count('purchase'))
-        bestSellers=Product.objects.filter(pricing_plan__in=bestSellersPlans)
+        bestSellersPlans = Product_Pricing_Plan.objects.annotate(numVendasProd=Count('purchase')).order_by('-numVendasProd')
 
-        bestSellers = list(bestSellers[:6])
+        bestSellers = []
+        for plan in bestSellersPlans[:6]:
+            bestSellers.append(plan.product)
+
 
         for best in bestSellers:
             best.tags = "best"
