@@ -496,6 +496,13 @@ def adminApps(request):
                     product.name=form.cleaned_data['name']
                     product.icon=form.cleaned_data['icon']
                     product.description=form.cleaned_data['description']
+
+                    categ = form.cleaned_data['category']
+                    cats_list = Category.objects.filter(title=categ)
+                    for c in cats_list:
+                        product.category.add(c)
+
+                    product.developer = form.cleaned_data['developer']
                     product.save()
                     data['success'] = 'Success editing the product ' + product.name
                 else:
