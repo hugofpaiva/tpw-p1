@@ -6,6 +6,12 @@
 
 	{% block content %}
 
+        {% if  errors is not None %}
+       <div class="alert alert-danger" role="alert">
+            {{ errors }}
+        </div>
+    {% endif %}
+
 	<!-- Shop Section Begin -->
 	<section class="shop spad">
 		<div class="container">

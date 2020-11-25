@@ -1,6 +1,7 @@
 from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.models import Count
+import re
 
 from app.filters import ProductFilter
 from app.forms import *
@@ -8,7 +9,6 @@ from app.models import *
 import random
 from django.contrib.auth import  login
 import datetime
-import json
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import render, redirect
 
@@ -18,11 +18,10 @@ def checkpayments(request,client):
     client_purchases=Purchase.objects.filter(client=client)
     if client_purchases.exists():
         purchases_to_pay=[p for p in client_purchases.all() if p.available_until != None and  p.has_paid_until()]
-        print(purchases_to_pay)
         #purchases that will expire between today and one week
         today = datetime.datetime.now()
-        one_week =  today+ datetime.timedelta(days=50)
-        will_expire=[ ('pur_'+str(pur), pur) for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
+        one_week =  today+ datetime.timedelta(days=7)
+        will_expire=[ ('pur_'+str(pur), '({}) {}'.format(pur.id, pur.product_plan.product.name)) for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
         return will_expire
     return []
 
@@ -32,21 +31,45 @@ def indexView(request):
     if request.user.is_authenticated and request.user.last_login is not None:
         if request.method == 'POST':
 
-            form=Expiring_Products_Form(request.POST,expiring_choices=())
-            if form.is_valid():
-                print(form.cleaned_data)
-                choices_purchs=form.cleaned_data['expiring_prods']
-                client=Client.objects.filter(user_id=request.user.id)
-                for purch in choices_purchs:
-                    print(purch.product_plan.price)
-                return redirect('index')
+            expiring_choices = request.POST.getlist('expiring_choices')
+            if expiring_choices is not None:
+                error = False
+                client=Client.objects.get(user_id=request.user.id)
+
+                for purch in expiring_choices:
+                    p_id = purch[purch.find('(') + 1: purch.find(')')]
+                    purchase = Purchase.objects.get(id=p_id)
+                    plan = purchase.product_plan
+                    if plan.price < client.balance:
+                        client.balance-= plan.price
+                        if plan.plan_type != 'FREE':
+                            if plan.plan_type == 'MONTHLY':
+                                print("OK")
+                                purchase.set_paid_until(datetime_offset_by_months(datetime.datetime.now()))
+                            elif plan.plan_type == 'ANNUAL':
+                                print("Ok1")
+                                oneyear = datetime.datetime.now()
+                                for i in range(1, 13):
+                                    oneyear = datetime_offset_by_months(oneyear)
+                                purchase.set_paid_until(oneyear)
+                        client.balance -= plan.price
+                        client.save()
+                        purchase.save()
+                    else:
+                        error = True
+                        request.session.__setitem__("last_request_error",
+                                                    "Insufficient balance for some of the products!")
+                if not error:
+                    request.session.__setitem__("last_request_success", "Success in the completion of the purchase!")
+            return redirect('index')
 
         else:
             if request.user.last_login.replace(tzinfo=None,microsecond=0)==datetime.datetime.now().replace(microsecond=0):
-                client=Client.objects.filter(user_id=request.user.id)[0]
+                client=Client.objects.get(user_id=request.user.id)
                 will_expire=checkpayments(request , client)
                 form=Expiring_Products_Form(expiring_choices=will_expire)
                 data['will_expire']=form
+                data['expire_modal']= will_expire
 
     if request.method=='GET':
         numBanners = random.randint(2, 6)
@@ -98,6 +121,13 @@ def indexView(request):
         data['productsBanner']=productsBanner
         data['activelem'] ='home'
 
+        if request.session.get("last_request_error") is not None:
+            data["errors"] = request.session.get("last_request_error")
+            del request.session["last_request_error"]
+        if request.session.get("last_request_success") is not None:
+            data["successes"] = request.session.get("last_request_success")
+            del request.session["last_request_success"]
+
     return render(request, 'index.html', data)
 
 
@@ -130,9 +160,14 @@ def shopView(request):
         product.nStars = range(product.stars)
         product.nEmptyStars = range(5 - product.stars)
 
+    data = {'activelem': 'shop', 'products': products, 'page': page,
+                   'categories': categories, 'developers': developers, 'getParams': request.GET}
+    if request.session.get("last_request_error") is not None:
+        data["errors"] = request.session.get("last_request_error")
+        del request.session["last_request_error"]
+
     return render(request, 'shop.html',
-                  {'activelem': 'shop', 'products': products, 'page': page,
-                   'categories': categories, 'developers': developers, 'getParams': request.GET})
+                  data)
 
 
 def register(request):
@@ -223,60 +258,65 @@ class Products_Forms_Processing:
 
 def prodDetails(request, idprod):
     product = Product.objects.get(id=idprod)
-    client = Client.objects.filter(user_id=request.user.id)
-    client = client[0]
-    if request.method == "POST":
-        form_purchases,form_favorites = PurchaseForm(request.POST),FavoritesForm(request.POST)
-        response=None
-        handler = Products_Forms_Processing(client, product)
-        if form_purchases.is_valid():
-            response=handler.check_curr_form(form_purchases,request)
-        elif form_favorites.is_valid():
+    if request.user.is_authenticated:
+        client = Client.objects.get(user_id=request.user.id)
+        if request.method == "POST":
+
+            form_purchases,form_favorites = PurchaseForm(request.POST),FavoritesForm(request.POST)
+            response=None
             handler = Products_Forms_Processing(client, product)
-            response = handler.check_curr_form(form_favorites, request)
-        return response
-    else:
-        form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
-        reviews = Reviews.objects.filter(product=product).order_by('-date')
-        numreviews = reviews.count()
-        # --- Django Pagination ---
-        paginator = Paginator(reviews, 5)  # shows 1 review per page
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        # ------------------------
-        # check if product is already, or not, added to the client's favorites
-        is_fav=False
-        if product in client.favorites.all(): is_fav=True
-        has_reviewed = False
-        for review in page_obj.object_list:
-            review.nStars = range(int(review.rating))
-            review.nEmptyStars = range(5 - int(review.rating))
-
-            if review.author.id == client.id:
-                has_reviewed = True
-
-        rate = reviews.aggregate(Avg('rating'))['rating__avg']
-        if rate:
-            product.rate = rate
+            if form_purchases.is_valid():
+                response=handler.check_curr_form(form_purchases,request)
+            elif form_favorites.is_valid():
+                handler = Products_Forms_Processing(client, product)
+                response = handler.check_curr_form(form_favorites, request)
+            return response
         else:
-            product.rate = 0
-        product.nStars, product.nEmptyStars  = range(int(product.rate)),range(5 - int(product.rate))
-        productbenefits = Prod_Benefits.objects.filter(product=product)
-        pricing = Product_Pricing_Plan.objects.filter(product=product)
-        categories = product.category.all()
-        totalpurchases = Purchase.objects.filter(product_plan__product=product).count()
-        data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
-               'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases,
-               ' form_fav':form_favorites, 'is_fav': is_fav, 'has_rev': has_reviewed }
-        #render in template errors in forms
+            form_purchases,form_favorites = PurchaseForm(),FavoritesForm()
+            reviews = Reviews.objects.filter(product=product).order_by('-date')
+            numreviews = reviews.count()
+            # --- Django Pagination ---
+            paginator = Paginator(reviews, 5)  # shows 1 review per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            # ------------------------
+            # check if product is already, or not, added to the client's favorites
+            is_fav=False
+            if product in client.favorites.all(): is_fav=True
+            has_reviewed = False
+            for review in page_obj.object_list:
+                review.nStars = range(int(review.rating))
+                review.nEmptyStars = range(5 - int(review.rating))
 
-        if  request.session.get("last_request_error") is not None:
-            data["errors"]  = request.session.get("last_request_error")
-            del request.session["last_request_error"]
-        if   request.session.get("last_request_success") is not None:
-            data["successes"] = request.session.get("last_request_success")
-            del request.session["last_request_success"]
-        return render(request, 'productdetails.html', data)
+                if review.author.id == client.id:
+                    has_reviewed = True
+
+            rate = reviews.aggregate(Avg('rating'))['rating__avg']
+            if rate:
+                product.rate = rate
+            else:
+                product.rate = 0
+            product.nStars, product.nEmptyStars  = range(int(product.rate)),range(5 - int(product.rate))
+            productbenefits = Prod_Benefits.objects.filter(product=product)
+            pricing = Product_Pricing_Plan.objects.filter(product=product)
+            categories = product.category.all()
+            totalpurchases = Purchase.objects.filter(product_plan__product=product).count()
+            data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
+                   'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases,
+                   ' form_fav':form_favorites, 'is_fav': is_fav, 'has_rev': has_reviewed }
+            #render in template errors in forms
+
+            if  request.session.get("last_request_error") is not None:
+                data["errors"]  = request.session.get("last_request_error")
+                del request.session["last_request_error"]
+            if   request.session.get("last_request_success") is not None:
+                data["successes"] = request.session.get("last_request_success")
+                del request.session["last_request_success"]
+            return render(request, 'productdetails.html', data)
+    else:
+        request.session.__setitem__("last_request_error",
+                                    "Need to be logged in to view product!")
+        return redirect('shop')
 
 #view for adding or editing a custom review
 def review_View(request,idprod):
@@ -338,7 +378,7 @@ def accountDetails(request):
         user = User.objects.get(username=request.user.username)
         client = Client.objects.get(user_id=user.id)
 
-        client_purch, page_purch = getPaginator(request, Purchase.objects.filter(client_id=client.id).order_by('-created_at'), 10, 'page_purch')
+        client_purch, page_purch = getPaginator(request, Purchase.objects.filter(client_id=client.id).order_by('-available_until'), 10, 'page_purch')
         # favourites
         fav, page_fav = getPaginator(request, client.favorites.all(), 10, 'page_fav')
         data={'userClient': client ,'favourites': fav, 'is_superuser':is_superuser,'client_purch':client_purch, 'page_purch': page_purch, 'page_fav': page_fav}

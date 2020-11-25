@@ -191,6 +191,17 @@ ol {
 	background: #000;
 }
 
+#id_expiring_choices {
+	list-style-type: none;
+
+}
+
+#id_expiring_choices li{
+	margin-top: 10px;
+	margin-left: 5px;
+
+}
+
 .loader {
 	width: 40px;
 	height: 40px;
