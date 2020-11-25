@@ -59,7 +59,7 @@
                              </td>
                             <td>{{ p.developer }}</td>
 
-                             <td style="display: flex; justify-content: center"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}', '{{ p.category }}', '{{ p.developer }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
+                             <td><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}', '{{ p.category }}', '{{ p.developer }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
@@ -112,6 +112,17 @@
 
                 {% if field.name == 'prod' %}
                     {{ field.as_hidden }}
+                {% elif field.name == 'category' %}
+                     <div >
+
+                        <span>Select Category to add:</span>
+
+                        {{ field|add_class:'form-control' }}
+
+                        {% for error in field.errors %}
+                          <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    </div>
                {% else %}
                     <div >
 
