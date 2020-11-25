@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load  static %}
 {% block content %}
-<div class="container" style="justify-content: center">
+<div class="container" style="justify-content: center; max-width: 1500px">
         {% if  error is not None %}
        <div class="alert alert-danger" role="alert">
             {{ error  }}
@@ -20,12 +20,12 @@
         <form method="post">
                 {% csrf_token %}
             {% for field in form %}
-                <p>
+                <p>{{ field.label_tag }}</p>
                 <div class="form-group" style="width: 50%">
-                {{ field.label_tag }}
+
                 {{ field }}
                 </div>
-                </p>
+
             {% endfor %}
 
         </div>
@@ -36,13 +36,13 @@
                       <p style="color: #ff0000">{{ field.errors}}</p>
                 {% else %}
 
-                <p>
+                <p>{{ field.label_tag }}</p>
                 <div class="form-group" style="width: 50%">
-                {{ field.label_tag }}
+
                 {{ field }}
                   <p style="color: red">{{ field.errors}}</p>
                 </div>
-                </p>
+
                 {% endif %}
             {% endfor %}
       <div class="text-right mt-3">

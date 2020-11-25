@@ -273,7 +273,7 @@ def prodDetails(request, idprod):
             reviews = Reviews.objects.filter(product=product).order_by('-date')
             numreviews = reviews.count()
             # --- Django Pagination ---
-            paginator = Paginator(reviews, 5)  # shows 1 review per page
+            paginator = Paginator(reviews, 5)
             page_number = request.GET.get('page')
             page_obj = paginator.get_page(page_number)
             # ------------------------
@@ -296,7 +296,6 @@ def prodDetails(request, idprod):
             product.nStars, product.nEmptyStars  = range(int(product.rate)),range(5 - int(product.rate))
             productbenefits = Prod_Benefits.objects.filter(product=product)
             pricing = Product_Pricing_Plan.objects.filter(product=product)
-            categories = product.category.all()
             totalpurchases = Purchase.objects.filter(product_plan__product=product).count()
             data= {'prod': product, 'revs': page_obj, 'prodbenefs': productbenefits,
                    'plans': pricing, 'purch': totalpurchases, 'numreviews': numreviews, 'form_purch': form_purchases,
@@ -364,7 +363,7 @@ def fill_form(client):
 
 
 
-# ver isto melhor ta cancro como a merda
+
 def accountDetails(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -389,9 +388,6 @@ def accountDetails(request):
                     client = Client.objects.get(user_id=update.client.id)
                     update.save()
                     update.refresh_from_db()
-                    #to stay logged in
-
-                    #Because after changes in account, the system logout the user
                     login(request, update.client)
                     form=fill_form(client)
                     form_pw = UpdatePasswordForm(request.user)
@@ -466,7 +462,6 @@ def adminUsers(request):
                     client.save()
                     data['success'] = 'Success editing the product ' + user.username
                 else:
-                    # Open the modal showing the error on page load, AINDA N FUNCIONA!
                     data['error'] = True
             else:
                 form = AddBalanceForm()
@@ -503,7 +498,6 @@ def adminApps(request):
                     product.save()
                     data['success'] = 'Success editing the product ' + product.name
                 else:
-                    #Open the modal showing the error on page load, AINDA N FUNCIONA!
                     data['error'] = True
             else:
                 form = EditProductForm()
@@ -592,14 +586,16 @@ def addApp(request):
                     pricing_plan.feature = form_plan.cleaned_data['feature']
                     pricing_plan.save()
                     data['success'] = 'Sucessing adding new App!'
+
             else:
                 data['error'] = 'Some error Ocurred. Check bellow for details'
-        else:
-            data['form'] = AddProductForm()
-            data['form_plan'] = AddPricingPlan()
+
+        data['form'] = AddProductForm()
+        data['form_plan'] = AddPricingPlan()
 
         return render(request,'addapp.html', data)
     return redirect('notfound')
+
 
 def getPaginator(request, qs, per_page, request_page='page'):
     paginator = Paginator(qs, per_page)

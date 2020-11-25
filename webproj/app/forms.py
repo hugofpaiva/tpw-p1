@@ -65,7 +65,7 @@ class EditProductForm(forms.Form):
     name = forms.CharField(max_length=50)
     icon=forms.URLField()
     description=forms.CharField(max_length=50)
-    category = forms.ModelChoiceField(queryset=Category.objects.all())
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False)
     developer = forms.ModelChoiceField(queryset=Developer.objects.all())
 
 class AddBalanceForm(forms.Form):
