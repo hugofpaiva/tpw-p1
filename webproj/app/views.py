@@ -39,7 +39,7 @@ def indexView(request):
 
                 for purch in expiring_choices:
                     purchase = Purchase.objects.get(
-                        product_plan__product__name__exact=purch)
+                        product_plan__product__name__exact=purch, client_id=client.id)
                     plan = purchase.product_plan
                     if plan.price < client.balance:
                         client.balance -= plan.price
