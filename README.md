@@ -3,34 +3,33 @@
 
 Este trabalho consistiu na criação de uma _Web App_ com enfoque no _desktop_, cujo objetivo principal é a disponibilização de uma loja de aplicações em _Django_.
 
-Cada aplicação tem associado um ou mais plano(s) de pagamento (grátis, mensal e anual), uma ou mais categorias e também um developer. É permitida a interação dos clientes com as aplicações, através de compras, adição ou remoção destes como favoritos, ou escrever _reviews_.
+Cada aplicação tem associado um ou mais planos de pagamento (grátis, mensal e anual), uma ou mais categorias e um developer. É permitida a interação dos clientes com as aplicações, através de compras, adição ou remoção destes como favoritos, ou escrever _reviews_.
 
 ### Funcionalidades de um cliente
 
-**Após efetuação do *login*:**
+**Após efetuar *login*:**
 
-- É possível ver o *username* e o saldo da conta no canto superior direito.
-- Caso o cliente exista alguma aplicação que expire a subscrição do plano de pagamento na próxima semana, é disponibilizada a opção de pagar ou não. _Para facilitar o teste do Professor a esta funcionalidade, foi colocada uma aplicação com a data de expiração a **30 de novembro** sendo que até lá, o aviso deverá aparecer._
+- É possível visualizar o *username* e o saldo da conta no canto superior direito.
+- Caso o cliente possua alguma aplicação que expire a subscrição na próxima semana, é disponibilizada a opção de pagar ou não. _Para facilitar o teste do Professor a esta funcionalidade, foi colocada uma aplicação com a data de expiração a **30 de novembro** sendo que até lá, o aviso deverá aparecer._
 
 **Na página Shop:**
 
-- É permitida a utilização dos filtros de forma dinâmica em todos os seus campos para encontrar as aplicações desejadas, bem como as ordenações.
+- É permitida a utilização dos filtros de forma dinâmica em todos os seus campos, bem como a ordenação, para encontrar as aplicações desejadas.
 
-- Em cada *preview* de aplicação, encontra-se a foto, nome e *rating* médio (estrelas)
+- Em cada *preview* de aplicação, encontra-se a foto, nome e *rating* médio (estrelas).
 
 **Clicando numa aplicação:**
 
 - É possível ver os detalhes da *app*.
 
 - É permitido adicionar/remover dos favoritos, comprar a *app*, ver e adicionar/editar *reviews*.
-
   
 
 **Clicando no nome no canto superior direito (nome do utilizador):**
   
 Na aba General:
 
-- É permitida a alteração das definições gerais do cliente
+- É permitida a alteração das definições gerais do cliente.
 
 Na aba Password:
 
@@ -47,19 +46,19 @@ Na aba My Apps:
 
 ## Funcionalidades de um administrador
   
- **Depois de efetuar o login:**
+ **Após efetuar o _login_:**
 
-- É permitida a visualização de todas as informações já referidas anteriormente no cliente.
+- É permitido visualizar todas as informações já referidas anteriormente no cliente.
 
 **Clicando no nome:**
 
-- É permitido fazer as mesmas alterações e/ou visualizações que o cliente
+- É permitido fazer as mesmas alterações e/ou visualizações que o cliente.
 
-**Além disso, clicando na aba Admin:**
+**Clicando na aba Admin:**
 
 Na aba Purchases:
 
-- É permitido ver a lista de todas as compras feitas na aplicação _web_, bem como qual o cliente que efetuou cada compra.
+- É permitido ver o histórico de todas as compras realizadas na aplicação _web_, assim como qual o cliente que efetuou cada compra.
 
 Na aba Users:
 
@@ -77,16 +76,16 @@ Na aba Applications:
 
 Nas abas _Add developer/Add category_:
 
-- É permitida a adição de novos _developers/categories_
+- É permitido adicionar novos _developers/categories_
 
   
   
 
 ## Alguns detalhes de implementação:
 
-Para as funções de criação de dados e edição foram utilizados _forms_ do _Django_.
+Para as funções de criação e edição de dados foram utilizados _forms_ do _Django_.
 
-A implementação base de filtros na página _shop_ utilizou _Django Filters_ bem como a paginação do _Django_.
+A implementação base de filtros na página _shop_ utilizou _Django Filters_ assim como a paginação do _Django_.
 
 Todas as _packages_ necessárias estão no ficheiro `requirements.txt`.
   
