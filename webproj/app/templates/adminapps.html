@@ -35,13 +35,14 @@
                  <div class="card-body pb-2">
                  {% if products %}
                    <table class="table" width="100%" align="center">
-                   <a class="site-btn" style="float: right"href="{% url 'addApp' %}" > Add Product</a>
+                   <a class="site-btn" style="float: right; margin-bottom: 25px"href="{% url 'addApp' %}" > Add Product</a>
                      <thead  style="background-color: black; border: 0; color: white;">
                        <tr>
-                         <th scope="col">Icon</th>
-                         <th scope="col">Name</th>
-                         <th scope="col">Category</th>
-                        <th scope="col" style="padding-left: 75px">Edit</th>
+                         <th scope="col" style="width: 20%">Icon</th>
+                         <th scope="col" style="width: 20%">Name</th>
+                         <th scope="col" style="width: 20%">Category</th>
+                            <th scope="col" style="width: 20%">Developer</th>
+                        <th scope="col" style="width: 20%">Edit</th>
 
                        </tr>
                      </thead>
@@ -56,8 +57,9 @@
                                  {% endfor %}
 
                              </td>
+                            <td>{{ p.developer }}</td>
 
-                             <td align="left" style="wi: 0px;"><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}', '{{ p.category }}', '{{ p.developer }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
+                             <td><a id ="a_{{ p.id }}"  href="#"  onclick="get_prod('{{p.id}}', '{{ p.name }}' , '{{ p.icon }}', '{{ p.description }}', '{{ p.category }}', '{{ p.developer }}' )" data-toggle="modal" data-target="#modalEditForm" style="width: 50%; text-align: center" class="site-btn">Edit </a></td>
                            </tr>
                        {% endfor %}
                      </tbody>
@@ -110,6 +112,17 @@
 
                 {% if field.name == 'prod' %}
                     {{ field.as_hidden }}
+                {% elif field.name == 'category' %}
+                     <div >
+
+                        <span>Select Category to add:</span>
+
+                        {{ field|add_class:'form-control' }}
+
+                        {% for error in field.errors %}
+                          <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    </div>
                {% else %}
                     <div >
 

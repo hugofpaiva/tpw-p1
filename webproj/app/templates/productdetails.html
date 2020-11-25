@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-lg-9 col-md-6" style=" padding-bottom: 15px ;margin-top:0%;padding-bottom: 0px">
                         <div class="container-fluid>" style="padding-top: 40px;padding-bottom: 60px;">
-                            <div class="product__details__text" style=" border-left: #e5e5e5;border-left-width: 5px;border-left-style: outset; text-align: left;margin-left: 20%;padding-left: 18px;">
+                            <div class="product__details__text" style=" border-left: #00000;border-left-width: 5px;border-left-style: outset; text-align: left;margin-left: 20%;padding-left: 18px;">
                             <h3>{{ prod.name}}</h3>
                                     <div class="rating">
                                 {% for _ in prod.nStars %}
@@ -40,10 +40,10 @@
                             {% for _ in prod.nEmptyStars %}
                                  <i class="fa fa-star-o"></i>
                             {% endfor %}
-                                <span> Review{{ revs | pluralize }}( {{ revs | length }} ) </span>
+                                <span> Review{{ revs | pluralize }} ({{ revs | length }}) </span>
                             </div>
                             <p>{{ prod.description }}</p>
-                            <h3>{{ purch }} <span style="text-decoration: none;color: #403d3d">Total Purchases</span></h3>
+
 
                             <div class="product__details__last__option">
                             <div style="padding-bottom:15px">
@@ -52,6 +52,11 @@
                                     {% for cat in prod.category.all %}
                                        <li> {{ cat }}</li>
                                     {% endfor %}
+                                    <br>
+                                    <span>Total Purchases:</span>
+
+                                       <li> {{ purch }}</li>
+
                                 </ul>
                             </div>
                              <div class="product__details__btns__option">
@@ -63,7 +68,7 @@
                                         {{ field.as_hidden}}
                                         {% endfor %}
                                   </div>
-                                <a onclick="add_remove_favorites()" type="button"><i class="fa fa-heart"></i> {% if is_fav %} remove to Favorites {% else %}add from Favorites {% endif %}</a>
+                                <a onclick="add_remove_favorites()" type="button"><i class="fa fa-heart"></i> {% if is_fav %}Remove from Favorites {% else %}Add to Favorites {% endif %}</a>
                                   </form>
                             </div>
                             </div>
@@ -73,12 +78,12 @@
                 </div>
             </div>
         </div>
-        <div class="product__details__content">
+        <div class="product__details__content" style="margin-bottom: 100px">
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-lg-8">
                         <div class="product__details__text">
-                             <h2><span>Check the Pricing Plans!</span></h2>
+                             <h2><span>Check the Pricing Plans:</span></h2>
                                 <img src="img/shop-details/details-payment.png" alt="">
                                  <div class="pricing card-deck flex-column flex-md-row mb-3 ">
 
@@ -112,7 +117,7 @@
                                 </li>
                                 <li   class="nav-item">
                                     <a {% if revs.number > 1 %} class="nav-link active" {% else %} class="nav-link" {% endif %} data-toggle="tab" href="#tabs-6"
-                                    role="tab">Review{{ revs | pluralize }}( {{ numreviews }} )</a>
+                                    role="tab">Review{{ revs | pluralize }} ({{ numreviews }})</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Product Benefits</a>
@@ -135,7 +140,6 @@
 
 
                                         {% if revs %}
-                                        <h4 class="text-center">Check the Latest Reviews on this app!</h4>
                                         {% for rev in revs %}
                                             <div class="product__details__tab__content__item">
                                             <div class="container">
