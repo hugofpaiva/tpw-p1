@@ -68,7 +68,6 @@ class Product_Pricing_Plan(models.Model):
 
 class Purchase(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    # TIRAR DEFAULT DPS APENAS PQ DEU MERDA COM AS EXISTING ROWS
     product_plan = models.ForeignKey(Product_Pricing_Plan, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     available_until = models.DateTimeField(null=True, blank=True, default=None)
