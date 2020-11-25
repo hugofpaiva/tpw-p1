@@ -499,6 +499,7 @@ def adminApps(request):
                     for c in cats_list:
                         product.category.add(c)
 
+                    product.category.exclude()
                     product.developer = form.cleaned_data['developer']
                     product.save()
                     data['success'] = 'Success editing the product ' + product.name
