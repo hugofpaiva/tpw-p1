@@ -1,7 +1,6 @@
 from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.models import Count
-import re
 
 from app.filters import ProductFilter
 from app.forms import *
@@ -21,7 +20,7 @@ def checkpayments(request,client):
         #purchases that will expire between today and one week
         today = datetime.datetime.now()
         one_week =  today+ datetime.timedelta(days=7)
-        will_expire=[ ('pur_'+str(pur), '({}) {}'.format(pur.id, pur.product_plan.product.name)) for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
+        will_expire=[ ('{}'.format(pur.product_plan.product.name), '{}'.format(pur.product_plan.product.name)) for pur in purchases_to_pay if today < pur.available_until.replace(tzinfo=None) < one_week]
         return will_expire
     return []
 
@@ -37,17 +36,15 @@ def indexView(request):
                 client=Client.objects.get(user_id=request.user.id)
 
                 for purch in expiring_choices:
-                    p_id = purch[purch.find('(') + 1: purch.find(')')]
-                    purchase = Purchase.objects.get(id=p_id)
+                    print(purch)
+                    purchase = Purchase.objects.get(product_plan__product__name__exact=purch)
                     plan = purchase.product_plan
                     if plan.price < client.balance:
                         client.balance-= plan.price
                         if plan.plan_type != 'FREE':
                             if plan.plan_type == 'MONTHLY':
-                                print("OK")
                                 purchase.set_paid_until(datetime_offset_by_months(datetime.datetime.now()))
                             elif plan.plan_type == 'ANNUAL':
-                                print("Ok1")
                                 oneyear = datetime.datetime.now()
                                 for i in range(1, 13):
                                     oneyear = datetime_offset_by_months(oneyear)
