@@ -87,7 +87,7 @@ class AddPricingPlan(forms.Form):
     prod = forms.IntegerField(required=False)
     plan=forms.ChoiceField(choices=Product_Pricing_Plan.plans)
     price = forms.DecimalField(max_digits=5,decimal_places=2,initial=0.00 ,widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    description = forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    feature = forms.CharField(max_length=100,widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class AddDeveloper(forms.ModelForm):
     class Meta:
@@ -104,3 +104,15 @@ class AddCategory(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 50%;'})
         }
+
+
+class Expiring_Products_Form(forms.Form):
+    expiring_choices = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        expiring_choices = kwargs.pop('expiring_choices', ())
+        super().__init__(*args, **kwargs)
+        self.fields['expiring_choices'].choices = expiring_choices

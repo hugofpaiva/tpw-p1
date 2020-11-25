@@ -6,7 +6,10 @@
     <head xmlns="http://www.w3.org/1999/html">
     <link rel="stylesheet" href="{% static "css/clientdetails.css" %}">
     </head>
+<<<<<<< HEAD
     <body onload="test()">
+=======
+>>>>>>> 859609d681df7f091f262970b37f59c6653b7c76
     <div class="container light-style flex-grow-1 container-p-y" style="max-width: 1500px">
      {% if  success is not None %}
        <div class="alert alert-success" role="alert">
@@ -18,7 +21,7 @@
     </h4>
 
 
-    <div class="card overflow-hidden">
+    <div class="card overflow-hidden" style="margin-bottom: 50px">
       <div class="row no-gutters row-bordered row-border-light">
         <div class="col-md-2 pt-0">
           <div class="list-group list-group-flush account-settings-links">
@@ -63,6 +66,18 @@
                        {% endfor %}
                      </tbody>
                    </table>
+                     <div class="col-lg-12" style="margin-bottom: 25px">
+							<div class="product__pagination">
+                                {% if page.has_previous %}
+                                <a href="javascript:insertParam({'page':{{ page.previous_page_number }}})">{{ page.previous_page_number }}</a>
+                                {% endif %}
+								<a class="active" href="">{{ page.number }}</a>
+                                {% if page.has_next %}
+                                <a href="javascript:insertParam({'page':{{ page.next_page_number }} })">{{ page.next_page_number }}</a>
+                                {% endif %}
+
+							</div>
+						</div>
                  {% else %}
                      <h4 class="text-center"> There are not any Apps</h4>
                  {% endif %}
@@ -74,9 +89,6 @@
     </div>
   </div>
 
-     <br>
-     <br>
-     <br>
 
 
 
@@ -129,8 +141,23 @@
         </div>
       </div>
     </div>
+<<<<<<< HEAD
 
     {% block javascript %}
+=======
+    {% if error %}
+    <script type="text/javascript">
+            var form = document.getElementById("myForm")
+            if (id!= null){
+                console.log("yauu")
+                //ADICIONAR AQUI
+            }
+    </script>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+>>>>>>> 859609d681df7f091f262970b37f59c6653b7c76
         <script>
         function test(){
             {% if error == True %}
@@ -161,8 +188,6 @@
 
     </script>
     {% endblock %}
-    </body>
-{% endblock %}
 
 
 
