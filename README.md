@@ -1,7 +1,7 @@
 
 # [App Store](http://hugofpaiva.pythonanywhere.com/)
 
-Este trabalho consistiu na criação de uma _Web App_ com enfoque no _desktop_, cujo objetivo principal é a disponibilização de uma loja de aplicações em _Django_.
+Este trabalho consistiu na criação de uma _Web App_ cujo objetivo principal é a disponibilização de uma loja de aplicações em _Django_.
 
 Cada aplicação tem associado um ou mais planos de pagamento (grátis, mensal e anual), uma ou mais categorias e um developer. É permitida a interação dos clientes com as aplicações, através de compras, adição ou remoção destes como favoritos, ou escrever _reviews_.
 
@@ -112,6 +112,9 @@ Alguns dos dados têm como base o seguinte _dataset_:
 https://www.kaggle.com/usernam3/shopify-app-store
 
 As imagens do produtos, desenvolvedores, categorias, entre outros dados foram utilizados.
+
+## Nota
+Classificação obtida de **17.5** valores em 20.
 
 
 
