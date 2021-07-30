@@ -41,7 +41,7 @@ Na aba Favorites:
 
 Na aba My Apps:
 
--É permitido ver uma lista de *apps* compradas pelo utilizador com informação relevantes como a data de expiração de uma compra, caso seja do tipo de um plano de subscrição.
+- É permitido ver uma lista de *apps* compradas pelo utilizador com informação relevantes como a data de expiração de uma compra, caso seja do tipo de um plano de subscrição.
 
 
 ## Funcionalidades de um administrador
